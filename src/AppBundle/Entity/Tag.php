@@ -24,6 +24,11 @@ class Tag {
     protected $name;
 
     /**
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    protected $score;
+
+    /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Recipe", mappedBy="tags")
      */
     protected $recipes;
@@ -31,6 +36,7 @@ class Tag {
     public function __construct()
     {
         $this->recipes = new ArrayCollection();
+        $this->score = 0;
     }
 
     public function getRecipes() {return $this->recipes;}
@@ -96,5 +102,39 @@ class Tag {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set score
+     *
+     * @param integer $score
+     *
+     * @return Tag
+     */
+    public function setScore($score)
+    {
+        $this->score = $score;
+
+        return $this;
+    }
+
+    /**
+     * Get score
+     *
+     * @return integer
+     */
+    public function getScore()
+    {
+        return $this->score;
+    }
+
+    public function upvote($amt)
+    {
+        $this->setScore($this->getScore()+$amt);
+    }
+
+    public function downvote($amt)
+    {
+        $this->setScore($this->getScore()-$amt);
     }
 }

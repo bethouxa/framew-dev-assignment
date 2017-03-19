@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class DefaultController extends Controller
 {
     /**
@@ -16,15 +17,34 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        return $this->render('dashboard.html.twig');
+        return $this->redirect('/home');
     }
 
     /**
-     * @Route("/home", name="Dashboard")
+     * @Route("/home", name="dashboard")
      */
     public function showDashboard()
     {
-        
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->createQueryBuilder();
+
+        $recipes = $qb->select('r')
+            ->from('AppBundle:Recipe','r')
+            ->where('r.public = true')
+            ->orderby('r.creationDate','DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $tags = $qb->select('t')
+            ->from('AppBundle:Tag','t')
+            ->getQuery()
+            ->getResult()
+        ;
+
+
+        return $this->render('dashboard.html.twig', ["latest_recipes"=>$recipes, "tags"=>$tags]);
     }
 
     /**
@@ -59,5 +79,22 @@ class DefaultController extends Controller
     {
         $recipes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Recipe")->findAll();
         return $this->render('recipesViewer..html.twig', ['recipes'=>$recipes]);
+    }
+
+    /**
+     * @Route("/test")
+     */
+    public function getLatestPublicRecipes() {
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->createQueryBuilder();
+
+        $q = $qb->select('r')
+            ->from('AppBundle:Recipe','r')
+            ->where('r.public = true')
+            ->orderby('r.creationDate','DESC')
+            ->setMaxResults(5)
+            ->getQuery();
+
+        return new Response(\Doctrine\Common\Util\Debug::dump($q->getResult()));
     }
 }

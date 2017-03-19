@@ -138,4 +138,18 @@ class RecipeController extends Controller
             ->getForm()
         ;
     }
+
+    public function getLatestPublicRecipes($amt) {
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->createQueryBuilder();
+
+        $q = $qb->select('r')
+            ->from('Recipe')
+            ->where('Recipe.public = true')
+            ->orderby('u.creationdate','DESC')
+            ->setMaxResults($amt)
+            ->getQuery();
+
+        return $q->getArrayResult();
+    }
 }

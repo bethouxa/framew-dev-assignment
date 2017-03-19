@@ -1,9 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-{% for recipe in latest_recipes %}
-<h3>{{ recipe.getName() }}</h3> <!-- TODO: link to detail view -->
-<p>{{ recipe.getSummary() }}</p>
-<p>by {{ recipe.getAuthor() }} on {{ recipe.getCreationDate }}</p>
-{% endfor %}
+    <div id="latest_recipes">
+        <h2>Latest public recipes</h2>
+        {% for recipe in latest_recipes %}
+        <h3>{{ recipe.getTitle() }}</h3> <!-- TODO: link to detail view -->
+        <p>{{ recipe.getSummary() }}</p>
+        <p>by {{ recipe.getAuthor() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }}</p>
+        {% endfor %}
+    </div>
+    <div id="tags">
+        <h2>Tags</h2>
+        <ul>
+            {% for tag in tags %}
+                <li>{{ tag.getName() }} ({{ tag.getScore() }}) (<a href="{{ path('upvote_tag', {'id':tag.getId()}) }}">up</a>/<a href="{{ path('downvote_tag', {'id':tag.getId()}) }}">down</a>)</li>
+            {% endfor %}
+        </ul>
+        <a href="{{ path('submit_tag') }}">Submit new tag</a>
+    </div>
+
+
 {% endblock %}
