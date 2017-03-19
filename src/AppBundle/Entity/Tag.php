@@ -14,17 +14,17 @@ class Tag {
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", unique=true, length=255, nullable=false)
      */
     protected $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Recipe", mappedBy="tags")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Recipe", mappedBy="tags")
      */
     protected $recipes;
 
@@ -38,15 +38,7 @@ class Tag {
 
 
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+
 
     /**
      * Set name
@@ -94,5 +86,15 @@ class Tag {
     public function removeRecipe(\AppBundle\Entity\Recipe $recipe)
     {
         $this->recipes->removeElement($recipe);
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }

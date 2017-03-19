@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Recipe</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ recipe.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ recipe.title }}</td>
+            </tr>
+            <tr>
+                <th>Summary</th>
+                <td>{{ recipe.summary }}</td>
+            </tr>
+            <tr>
+                <th>Public</th>
+                <td>{% if recipe.public %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Author</th>
+                <td>{{ recipe.author }}</td>
+            </tr>
+            <tr>
+                <th>Photo</th>
+                <td>{{ recipe.photo }}</td>
+            </tr>
+            <tr>
+                <th>Creationdate</th>
+                <td>{{ recipe.creationDate|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Lasteditdate</th>
+                <td>{{ recipe.lastEditDate|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Rating</th>
+                <td>{{ recipe.rating }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('recipe_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('recipe_edit', { 'id': recipe.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -14,3 +14,12 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+doctrine:
+    dbal:
+        driver:   pdo_mysql
+        host:     localhost
+        port:     3306
+        dbname:   recipe-manager-test
+        user:     dev-framework
+        password: null

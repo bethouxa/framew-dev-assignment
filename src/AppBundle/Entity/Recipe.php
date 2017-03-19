@@ -16,72 +16,77 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="recipes")
  */
-class Recipe {
+class Recipe
+{
 
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer", unique=TRUE)
-     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $title;
 
     /**
-     * @ORM\Column(type="text", nullable=TRUE)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $summary;
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $public;
     /**
-     * @ORM\Column(type="string", length=255, nullable=TRUE)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $author;
     /**
-     * @ORM\Column(type="string", length=500, nullable=TRUE)
+     * @ORM\Column(type="string", length=500, nullable=true)
      */
     protected $photo;
     /**
-     * @ORM\Column(type="time", name="creation")
+     * @ORM\Column(type="datetime", nullable=true, name="creation")
      */
     protected $creationDate;
     /**
-     * @ORM\Column(type="time", name="last_edit")
+     * @ORM\Column(type="datetime", nullable=true, name="last_edit")
      */
     protected $lastEditDate;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $rating;
 
 
     /**
      * One Recipe has many Steps.
-     * @ORM\ManyToMany(targetEntity="Step")
-     * @ORM\JoinTable(name="recipe_steps",
-     *     joinColumns={@ORM\JoinColumn(name="recipe_id",referencedColumnName="id")},
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Step")
+     * @ORM\JoinTable(
+     *     name="recipe_steps",
+     *     joinColumns={@ORM\JoinColumn(name="recipe_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="step_id", referencedColumnName="id", unique=true)}
-     *     )
+     * )
      */
     protected $steps;
 
     /**
      * Many recipes have many ingredients.
-     * @ORM\ManyToMany(targetEntity="Ingredient", inversedBy="recipes")
-     * @ORM\JoinTable(name="recipes_ingredients")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\IngredientsUsed", mappedBy="recipe")
      */
     protected $ingredients;
 
     /**
      * Many recipes have many tags.
-     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="recipes")
-     * @ORM\JoinTable(name="recipes_tags")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="recipes")
+     * @ORM\JoinTable(
+     *     name="recipes_tags",
+     *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="Tag_id", referencedColumnName="id")}
+     * )
      */
     protected $tags;
 
@@ -91,11 +96,13 @@ class Recipe {
         $this->steps = new ArrayCollection();
         $this->ingredients = new ArrayCollection();
         $this->tags = new ArrayCollection();
+
+        $this->setCreationDate(new \DateTime());
+        $this->setLastEditDate(new \DateTime());
+        $this->setPublic(false);
+        $this->setRating(0);
     }
 
-    public function getTags() { return $this->tags; }
-    public function getSteps() { return $this->steps; }
-    public function getIngredients() { return $this->ingredients; }
 
 
     /**
@@ -231,11 +238,11 @@ class Recipe {
     /**
      * Set creationDate
      *
-     * @param \datetype $creationDate
+     * @param \DateTime $creationDate
      *
      * @return Recipe
      */
-    public function setCreationDate(\datetype $creationDate)
+    public function setCreationDate($creationDate)
     {
         $this->creationDate = $creationDate;
 
@@ -245,7 +252,7 @@ class Recipe {
     /**
      * Get creationDate
      *
-     * @return \datetype
+     * @return \DateTime
      */
     public function getCreationDate()
     {
@@ -255,11 +262,11 @@ class Recipe {
     /**
      * Set lastEditDate
      *
-     * @param \datetype $lastEditDate
+     * @param \DateTime $lastEditDate
      *
      * @return Recipe
      */
-    public function setLastEditDate(\datetype $lastEditDate)
+    public function setLastEditDate($lastEditDate)
     {
         $this->lastEditDate = $lastEditDate;
 
@@ -269,7 +276,7 @@ class Recipe {
     /**
      * Get lastEditDate
      *
-     * @return \datetype
+     * @return \DateTime
      */
     public function getLastEditDate()
     {
@@ -325,13 +332,23 @@ class Recipe {
     }
 
     /**
+     * Get steps
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSteps()
+    {
+        return $this->steps;
+    }
+
+    /**
      * Add ingredient
      *
-     * @param \AppBundle\Entity\Ingredient $ingredient
+     * @param \AppBundle\Entity\IngredientsUsed $ingredient
      *
      * @return Recipe
      */
-    public function addIngredient(\AppBundle\Entity\Ingredient $ingredient)
+    public function addIngredient(\AppBundle\Entity\IngredientsUsed $ingredient)
     {
         $this->ingredients[] = $ingredient;
 
@@ -341,11 +358,21 @@ class Recipe {
     /**
      * Remove ingredient
      *
-     * @param \AppBundle\Entity\Ingredient $ingredient
+     * @param \AppBundle\Entity\IngredientsUsed $ingredient
      */
-    public function removeIngredient(\AppBundle\Entity\Ingredient $ingredient)
+    public function removeIngredient(\AppBundle\Entity\IngredientsUsed $ingredient)
     {
         $this->ingredients->removeElement($ingredient);
+    }
+
+    /**
+     * Get ingredients
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIngredients()
+    {
+        return $this->ingredients;
     }
 
     /**
@@ -370,5 +397,15 @@ class Recipe {
     public function removeTag(\AppBundle\Entity\Tag $tag)
     {
         $this->tags->removeElement($tag);
+    }
+
+    /**
+     * Get tags
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTags()
+    {
+        return $this->tags;
     }
 }

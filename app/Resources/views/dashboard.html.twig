@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% for recipe in latest_recipes %}
+<h3>{{ recipe.getName() }}</h3> <!-- TODO: link to detail view -->
+<p>{{ recipe.getSummary() }}</p>
+<p>by {{ recipe.getAuthor() }} on {{ recipe.getCreationDate }}</p>
+{% endfor %}
+{% endblock %}

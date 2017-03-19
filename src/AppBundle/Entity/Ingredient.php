@@ -12,26 +12,23 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Ingredient {
 
     /**
-     * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue
-     */
-    protected $id;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     protected $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Recipe", mappedBy="ingredients")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\IngredientsUsed", mappedBy="ingredient")
      */
-    protected $recipes;
+    protected $usedIn;
 
-    public function __construct()
+    public function __construct(string $name)
     {
-        $this->recipes = new ArrayCollection();
+        $this->name = $name;
+        $this->usedIn = new ArrayCollection();
     }
+
+
 
 
 
@@ -73,13 +70,13 @@ class Ingredient {
     /**
      * Add recipe
      *
-     * @param \AppBundle\Entity\Recipe $recipe
+     * @param \AppBundle\Entity\IngredientsUsed $recipe
      *
      * @return Ingredient
      */
-    public function addRecipe(\AppBundle\Entity\Recipe $recipe)
+    public function addRecipe(\AppBundle\Entity\IngredientsUsed $recipe)
     {
-        $this->recipes[] = $recipe;
+        $this->usedIn[] = $recipe;
 
         return $this;
     }
@@ -87,11 +84,11 @@ class Ingredient {
     /**
      * Remove recipe
      *
-     * @param \AppBundle\Entity\Recipe $recipe
+     * @param \AppBundle\Entity\IngredientsUsed $recipe
      */
-    public function removeRecipe(\AppBundle\Entity\Recipe $recipe)
+    public function removeRecipe(\AppBundle\Entity\IngredientsUsed $recipe)
     {
-        $this->recipes->removeElement($recipe);
+        $this->usedIn->removeElement($recipe);
     }
 
     /**
@@ -99,8 +96,32 @@ class Ingredient {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getRecipes()
+    public function getUsedIn()
     {
-        return $this->recipes;
+        return $this->usedIn;
+    }
+
+    /**
+     * Add usedIn
+     *
+     * @param \AppBundle\Entity\IngredientsUsed $usedIn
+     *
+     * @return Ingredient
+     */
+    public function addUsedIn(\AppBundle\Entity\IngredientsUsed $usedIn)
+    {
+        $this->usedIn[] = $usedIn;
+
+        return $this;
+    }
+
+    /**
+     * Remove usedIn
+     *
+     * @param \AppBundle\Entity\IngredientsUsed $usedIn
+     */
+    public function removeUsedIn(\AppBundle\Entity\IngredientsUsed $usedIn)
+    {
+        $this->usedIn->removeElement($usedIn);
     }
 }
