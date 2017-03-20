@@ -81,7 +81,7 @@ class DefaultController extends Controller
     public function showAllRecipes()
     {
         $recipes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Recipe")->findAll();
-        return $this->render('recipesViewer..html.twig', ['recipes'=>$recipes]);
+        return $this->render('recipesViewer.html.twig', ['recipes'=>$recipes]);
     }
 
     /**
