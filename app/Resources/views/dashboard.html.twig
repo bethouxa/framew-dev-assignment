@@ -1,21 +1,37 @@
 {% extends 'base.html.twig' %}
+{% import _self as macros %}
+
+{% block title %}Recipe manager{% endblock %}
+
+{% macro recipe_summary(recipe) %}
+<h3>{{ recipe.getTitle() }}</h3> <!-- TODO: link to detail view -->
+<p>{{ recipe.getSummary() }}</p>
+<p>by {{ recipe.getAuthor() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }}</p>
+{% endmacro %}
+
+{% macro tag_score_vote(tag) %}
+    {{ tag.getName() }} ({{ tag.getScore() }} - <a href="{{ path('vote_tag', {'action':'up', 'id':tag.getId()}) }}">up</a>/<a href="{{ path('vote_tag', {'action':'down', 'id':tag.getId()}) }}">down</a>)
+{% endmacro %}
 
 {% block body %}
     <div id="latest_recipes">
         <h2>Latest public recipes</h2>
         {% for recipe in latest_recipes %}
-        <h3>{{ recipe.getTitle() }}</h3> <!-- TODO: link to detail view -->
-        <p>{{ recipe.getSummary() }}</p>
-        <p>by {{ recipe.getAuthor() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }}</p>
+            <div>{{ macros.recipe_summary(recipe) }}</div>
         {% endfor %}
     </div>
     <div id="tags">
         <h2>Tags</h2>
+        <h3>Current tags</h3>
         <ul>
             {% for tag in tags %}
-                <li>{{ tag.getName() }} ({{ tag.getScore() }}) (<a href="{{ path('upvote_tag', {'id':tag.getId()}) }}">up</a>/<a href="{{ path('downvote_tag', {'id':tag.getId()}) }}">down</a>)</li>
+                <li>
+                    {{ macros.tag_score_vote(tag) }}
+                </li>
             {% endfor %}
         </ul>
+        <h2>Tags waiting for approval</h2>
+
         <a href="{{ path('submit_tag') }}">Submit new tag</a>
     </div>
 
