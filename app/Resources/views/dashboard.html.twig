@@ -26,11 +26,16 @@
         <ul>
             {% for tag in tags %}
                 <li>
-                    {{ macros.tag_score_vote(tag) }}
+                    <a href="">{{ tag.getName() }}</a>
                 </li>
             {% endfor %}
         </ul>
         <h2>Tags waiting for approval</h2>
+        {% for tag in tags_pending %}
+            <li>
+                {{ macros.tag_score_vote(tag) }}
+            </li>
+        {% endfor %}
 
         <a href="{{ path('submit_tag') }}">Submit new tag</a>
     </div>

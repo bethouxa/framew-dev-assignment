@@ -28,23 +28,26 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
 
+        // 5 most recent recipes (order by creation date, 5 max)
         $recipes = $qb->select('r')
             ->from('AppBundle:Recipe','r')
             ->where('r.public = true')
             ->orderby('r.creationDate','DESC')
             ->setMaxResults(5)
-            ->getQuery()
-            ->getResult()
+            ->getQuery()->getResult()
         ;
 
         $tags = $qb->select('t')
             ->from('AppBundle:Tag','t')
-            ->getQuery()
-            ->getResult()
+            ->getQuery()->getResult()
         ;
 
+        $pendingTags = $qb->select('pt')
+            ->from('AppBundle:PendingTag','pt')
+            ->getQuery()->getResult()
+        ;
 
-        return $this->render('dashboard.html.twig', ["latest_recipes"=>$recipes, "tags"=>$tags]);
+        return $this->render('dashboard.html.twig', ["latest_recipes"=>$recipes, "tags"=>$tags, "tags_pending"=>$pendingTags]);
     }
 
     /**
