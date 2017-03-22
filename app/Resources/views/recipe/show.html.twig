@@ -30,6 +30,16 @@
                 <td>{{ recipe.photo }}</td>
             </tr>
             <tr>
+                <th>Steps</th>
+                <td>
+                    <ol>
+                        {% for step in steps %}
+                        <li>{{ step.content }}</li>
+                        {% endfor %}
+                    </ol>
+                </td>
+            </tr>
+            <tr>
                 <th>Creationdate</th>
                 <td>{{ recipe.creationDate|date('Y-m-d H:i:s') }}</td>
             </tr>

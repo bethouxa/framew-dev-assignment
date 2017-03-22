@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Recipe;
+use AppBundle\Entity\Step;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -58,6 +59,11 @@ class RecipeController extends Controller
         ));
     }
 
+    function sortSteps($a,$b)
+    {
+        return ($a->getStepNum() - $b->getStepNum());
+    }
+
     /**
      * Finds and displays a recipe entity.
      *
@@ -67,9 +73,12 @@ class RecipeController extends Controller
     public function showAction(Recipe $recipe)
     {
         $deleteForm = $this->createDeleteForm($recipe);
+        $steps_ordered = $recipe->getSteps()->toArray();
+         usort($steps_ordered, function($a,$b){return ($a->getStepNum() - $b->getStepNum());}); // FIXME
 
         return $this->render('recipe/show.html.twig', array(
             'recipe' => $recipe,
+            'steps' =>$steps_ordered,
             'delete_form' => $deleteForm->createView(),
 
 
