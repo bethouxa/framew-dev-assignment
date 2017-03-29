@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Recipe;
+use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,24 +26,28 @@ class DefaultController extends Controller
      */
     public function showDashboard()
     {
+        dump($this->getUser());
         $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
+
 
         // 5 most recent recipes (order by creation date, 5 max)
-        $recipes = $qb->select('r')
-            ->from('AppBundle:Recipe','r')
-            ->where('r.public = true')
-            ->orderby('r.creationDate','DESC')
-            ->setMaxResults(5)
-            ->getQuery()->getResult()
-        ;
+        $q = $em->createQueryBuilder()
+        ->select('r')
+        ->from('AppBundle:Recipe','r')
+        ->orderby('r.creationDate','DESC')
+        ->orWhere('r.public = true')
+        ->setMaxResults(5);
 
-        $tags = $qb->select('t')
+        $recipes = $q->getQuery()->getResult();
+
+        $tags = $em->createQueryBuilder()
+            ->select('t')
             ->from('AppBundle:Tag','t')
             ->getQuery()->getResult()
         ;
 
-        $pendingTags = $qb->select('pt')
+        $pendingTags = $em->createQueryBuilder()
+            ->select('pt')
             ->from('AppBundle:PendingTag','pt')
             ->getQuery()->getResult()
         ;
@@ -58,7 +63,7 @@ class DefaultController extends Controller
         $recipe = $this->getDoctrine()->getRepository('AppBundle:Recipe')->find($id);
         if (!$recipe)
             throw $this->createNotFoundException('This recipe does not exist.');
-        return $this->render('_recipe.html.twig',['r'=>$recipe]);
+        return $this->render(':recipe:show.html.twig',['recipe'=>$recipe]);
     }
 
     /**
@@ -73,15 +78,6 @@ class DefaultController extends Controller
         $em->persist($recipe);
         $em->flush();
         return new Response('',201);
-    }
-
-    /**
-     * @Route("/showAll", name="All recipes")
-     */
-    public function showAllRecipes()
-    {
-        $recipes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Recipe")->findAll();
-        return $this->render('recipesViewer.html.twig', ['recipes'=>$recipes]);
     }
 
     /**

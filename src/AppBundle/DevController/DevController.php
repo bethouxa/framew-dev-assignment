@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\DevController;
 
 use AppBundle\Entity\PendingTag;
 use AppBundle\Entity\Tag;
@@ -26,7 +26,7 @@ class DevController extends Controller
      */
     public function testDevControllerAction()
     {
-        return new Response('', 204);
+        return $this->render('empty.html.twig');
     }
 
     /**
@@ -69,6 +69,28 @@ class DevController extends Controller
     public function testInheritanceAction()
     {
         dump($this->getDoctrine()->getRepository('AppBundle:Tag')->findAll());
-        return new Response();
+        return $this->render('empty.html.twig');
+    }
+
+    /**
+     * @Route("/roles")
+     */
+    public function displRolesAction() {
+        dump($this->getUser()->getRoles());
+        return $this->render('empty.html.twig');
+    }
+
+    /**
+     * @Route("/grant")
+     */
+    public function grantRolesAction() {
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+            throw $this->createAccessDeniedException();
+
+        $u = $this->getUser()->setSuperAdmin(true);
+        $this->getDoctrine()->getManager()->persist($u);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->render("empty.html.twig");
     }
 }

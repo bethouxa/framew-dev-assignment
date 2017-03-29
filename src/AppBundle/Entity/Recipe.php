@@ -40,7 +40,8 @@ class Recipe
      */
     protected $public;
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
     protected $author;
     /**
@@ -185,30 +186,6 @@ class Recipe
     public function getPublic()
     {
         return $this->public;
-    }
-
-    /**
-     * Set author
-     *
-     * @param string $author
-     *
-     * @return Recipe
-     */
-    public function setAuthor($author)
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    /**
-     * Get author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
     }
 
     /**
@@ -407,5 +384,29 @@ class Recipe
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Set author
+     *
+     * @param \AppBundle\Entity\User $author
+     *
+     * @return Recipe
+     */
+    public function setAuthor(\AppBundle\Entity\User $author = null)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }

@@ -6,7 +6,7 @@
 {% macro recipe_summary(recipe) %}
 <h3>{{ recipe.getTitle() }}</h3> <!-- TODO: link to detail view -->
 <p>{{ recipe.getSummary() }}</p>
-<p>by {{ recipe.getAuthor() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }}</p>
+<p>by {{ recipe.getAuthor().getName() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }} {% if recipe.public %}(public){% endif %}</p>
 {% endmacro %}
 
 {% macro tag_score_vote(tag) %}
