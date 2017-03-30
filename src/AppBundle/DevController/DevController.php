@@ -96,4 +96,13 @@ class DevController extends Controller
             dump($tag);
         return $this->render('empty.html.twig');
     }
+
+    /**
+     * @Route("/findNothing")
+     */
+    public function findNothingAction() {
+        $nothing = $this->getDoctrine()->getManager()->getRepository('AppBundle:Recipe')->find(450);
+        dump($nothing);
+        return $this->render('empty.html.twig');
+    }
 }

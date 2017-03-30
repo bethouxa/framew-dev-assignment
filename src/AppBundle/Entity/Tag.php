@@ -11,8 +11,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Tag extends BaseTag {
 
-    public static function castFromPending(BaseTag $tag)
+    public function __construct(BaseTag $tag)
     {
-        return new Tag($tag->getName());
+        parent::__construct($tag->getName());
     }
 }
