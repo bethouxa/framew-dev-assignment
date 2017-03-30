@@ -92,6 +92,12 @@ class Recipe
      */
     protected $tags;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Collection", inversedBy="recipes")
+     * @ORM\JoinColumn(name="collection", referencedColumnName="id")
+     */
+    protected $collection;
+
 
     public function __construct()
     {
@@ -409,5 +415,29 @@ class Recipe
     public function getAuthor()
     {
         return $this->author;
+    }
+
+    /**
+     * Set collection
+     *
+     * @param \AppBundle\Entity\Collection $collection
+     *
+     * @return Recipe
+     */
+    public function setCollection(\AppBundle\Entity\Collection $collection = null)
+    {
+        $this->collection = $collection;
+
+        return $this;
+    }
+
+    /**
+     * Get collection
+     *
+     * @return \AppBundle\Entity\Collection
+     */
+    public function getCollection()
+    {
+        return $this->collection;
     }
 }
