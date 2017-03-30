@@ -17,14 +17,5 @@
 .idea
 
 Assignment1Symfony.skipper
-src/AppBundle/Entity/BaseTag.php~
-src/AppBundle/Entity/Collection.php~
-src/AppBundle/Entity/Ingredient.php~
-src/AppBundle/Entity/IngredientsUsed.php~
-src/AppBundle/Entity/PendingTag.php~
-src/AppBundle/Entity/Recipe.php~
-src/AppBundle/Entity/Step.php~
-src/AppBundle/Entity/Tag.php~
-src/AppBundle/Entity/TagBase.php~
-src/AppBundle/Entity/User.php~
-src/AppBundle/Resources/views/Dev/
+src/AppBundle/Entity/.*.php~
+/composer.lock

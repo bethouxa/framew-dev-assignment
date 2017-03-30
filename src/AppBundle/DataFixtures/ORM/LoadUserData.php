@@ -1,24 +1,36 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: betho
- * Date: 22/03/2017
- * Time: 17:03
- */
-
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use AppBundle\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadUserData implements \Doctrine\Common\DataFixtures\FixtureInterface
+class LoadUserData implements FixtureInterface, ContainerAwareInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     public function load(ObjectManager $manager)
     {
-        $userAdmin = new User();
-        $userAdmin->setUsername('admin');
-        $userAdmin->setPassword('adminPwd');
+        $userManager = $this->container->get('fos_user.user_manager');
 
-        $manager->persist($userAdmin);
+        $user = $userManager->createUser();
+        $user->setUsername('admin');
+        $user->setEmail('admin@recipe-manager.com');
+        $user->setPlainPassword('plopplop');
+        $user->setEnabled(true);
+        $user->setRoles(array('ROLE_SUPER_ADMIN'));
+
+        $userManager->updateUser($user, true);
+
+        $manager->persist($user);
         $manager->flush();
     }
 }
