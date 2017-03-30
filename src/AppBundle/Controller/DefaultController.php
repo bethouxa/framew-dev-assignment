@@ -52,31 +52,21 @@ class DefaultController extends Controller
             ->getQuery()->getResult()
         ;
 
-        return $this->render('dashboard.html.twig', ["latest_recipes"=>$recipes, "tags"=>$tags, "tags_pending"=>$pendingTags]);
+        $collections = $em->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Collection', 'c')
+            ->setmaxResults(3)
+            ->getQuery()->getResult()
+        ;
+
+        return $this->render('dashboard.html.twig',
+            [
+                "latest_recipes"=>$recipes,
+                "tags"=>$tags,
+                "tags_pending"=>$pendingTags,
+                "collections"=>$collections,
+            ]
+        );
     }
 
-    /**
-     * @Route("/show/{id}", name="Recipe")
-     */
-    public function showRecipe($id)
-    {
-        $recipe = $this->getDoctrine()->getRepository('AppBundle:Recipe')->find($id);
-        if (!$recipe)
-            throw $this->createNotFoundException('This recipe does not exist.');
-        return $this->render(':recipe:show.html.twig',['recipe'=>$recipe]);
-    }
-
-    /**
-     * @Route("/create", name="Recipe creation")
-     */
-    public function createDummyRecipe()
-    {
-        $em = $this->getDoctrine()->getManager();
-        $recipe = new Recipe();
-        $recipe->setAuthor("Test author");
-        $recipe->setTitle("Test recipe");
-        $em->persist($recipe);
-        $em->flush();
-        return new Response('',201);
-    }
 }

@@ -30,5 +30,13 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 
         $userManager->updateUser($user); // handles persist / flush
 
+        $user = $userManager->createUser();
+        $user->setUsername('[deleted]');
+        $user->setEmail('admin@recipe-manager.com');
+        $user->setPlainPassword('plopplop');
+        $user->setEnabled(false);
+
+        $userManager->updateUser($user); // handles persist / flush
+
     }
 }

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Collection</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ collection.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ collection.name }}</td>
+            </tr>
+            <tr>
+                <th>Shared</th>
+                <td>{% if collection.shared %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Owner</th>
+                <td>{{ collection.owner.name }}</td>
+            </tr>
+            <tr>
+            <th>Recipes</th>
+                <td>
+                    <ul>
+                        {% for recipe in collection.recipes %}
+                        <li><a href="{{ path('recipe_show', {'id': recipe.id}) }}">{{ recipe.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('collection_index') }}">Back to the list</a>
+        </li>
+        {% if app.user.username == collection.owner %}
+        <li>
+            <a href="{{ path('collection_edit', { 'id': collection.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+        {% endif %}
+    </ul>
+{% endblock %}

@@ -26,7 +26,13 @@ class Collection
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="Recipe", mappedBy="collection")
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="owner", referencedColumnName="id")
+     */
+    protected $owner;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Recipe", mappedBy="collections")
      */
     protected $recipes;
 
@@ -36,9 +42,10 @@ class Collection
      */
     protected $shared;
 
-    public function __construct()
+    public function __construct(User $owner)
     {
         $this->recipes = new ArrayCollection();
+        $this->owner = $owner;
     }
 
 
@@ -88,6 +95,40 @@ class Collection
         $this->shared = $shared;
 
         return $this;
+    }
+
+    /**
+     * Get shared
+     *
+     * @return boolean
+     */
+    public function isShared()
+    {
+        return $this->shared;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param \AppBundle\Entity\User $owner
+     *
+     * @return Collection
+     */
+    public function setOwner(\AppBundle\Entity\User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getOwner()
+    {
+        return $this->owner;
     }
 
     /**

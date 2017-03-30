@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 {% import _self as macros %}
+{% import ':collection:show_summary.html.twig' as coll %}
 
 {% block title %}Recipe manager{% endblock %}
 
@@ -19,12 +20,22 @@
     <div id="login_register">
         <a href="{{ path('fos_user_security_login') }}">Login</a> | <a href="{{ path('fos_user_registration_register') }}">Register</a>
     </div>
+
     <div id="latest_recipes">
         <h2>Latest public recipes</h2>
         {% for recipe in latest_recipes %}
             <div>{{ macros.recipe_summary(recipe) }}</div>
         {% endfor %}
     </div>
+
+{% if is_granted(expression('"IS_AUTHENTICATED_REMEMBERED" in roles ')) %}
+    <div id="collections">
+        {% for collection in collections %}
+        {{ coll.coll_summ(collection) }}
+        {% endfor %}
+    </div>
+{% endif %}
+
     <div id="tags">
         <h2>Tags</h2>
         <h3>Current tags</h3>

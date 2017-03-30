@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% macro coll_summ(collection) %}
+    <h4>{{ collection.name }} by {{ collection.owner }}</h4>
+    <p>Shared: {% if collection.shared %}Yes{% else %}No{% endif %}</p>
+    <ul>
+        {% for recipe in collection.recipes %}
+        <li>{{ recipe.name }}</li>
+        {% endfor %}
+    </ul>
+{% endmacro %}

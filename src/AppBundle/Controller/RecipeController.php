@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Recipe;
-use AppBundle\Entity\Step;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -38,10 +37,12 @@ class RecipeController extends Controller
      *
      * @Route("/new", name="recipe_new")
      * @Method({"GET", "POST"})
+     * TODO: logged in users only
      */
     public function newAction(Request $request)
     {
         $recipe = new Recipe();
+        $recipe->setAuthor($this->getUser());
         $form = $this->createForm('AppBundle\Form\RecipeType', $recipe);
         $form->handleRequest($request);
 
@@ -59,11 +60,6 @@ class RecipeController extends Controller
         ));
     }
 
-    function sortSteps($a,$b)
-    {
-        return ($a->getStepNum() - $b->getStepNum());
-    }
-
     /**
      * Finds and displays a recipe entity.
      *
@@ -72,20 +68,8 @@ class RecipeController extends Controller
      */
     public function showAction(Recipe $recipe)
     {
-        $steps_ordered = $recipe->getSteps()->toArray();
-        usort($steps_ordered, function($a,$b){return ($a->getStepNum() - $b->getStepNum());}); // FIXME
-
-        if($recipe->getAuthor() == $this->getUser())
-        {
-            $deleteForm = $this->createDeleteForm($recipe);
-            return $this->render('recipe/show.html.twig', ['recipe' => $recipe, 'delete_form' => $deleteForm->createView()]);
-        }
-        else
-        {
-            return $this->render('recipe/show_readonly.html.twig', ['recipe' => $recipe]);
-        }
-
-
+        $deleteForm = $this->createDeleteForm($recipe);
+        return $this->render('recipe/show.html.twig', ['recipe' => $recipe, 'delete_form' => $deleteForm->createView()]);
     }
 
     /**
