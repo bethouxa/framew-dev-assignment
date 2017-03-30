@@ -4,7 +4,7 @@
 {% block title %}Recipe manager{% endblock %}
 
 {% macro recipe_summary(recipe) %}
-<h3>{{ recipe.getTitle() }}</h3> <!-- TODO: link to detail view -->
+    <h3><a href="{{ path('recipe_show', {'id': recipe.id}) }}">{{ recipe.getTitle() }}</a></h3> <!-- TODO: link to detail view -->
 <p>{{ recipe.getSummary() }}</p>
 <p>by {{ recipe.getAuthor().getName() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }} {% if recipe.public %}(public){% endif %}</p>
 {% endmacro %}
@@ -13,7 +13,12 @@
     {{ tag.getName() }} ({{ tag.getScore() }} - <a href="{{ path('vote_tag', {'action':'up', 'id':tag.getId()}) }}">up</a>/<a href="{{ path('vote_tag', {'action':'down', 'id':tag.getId()}) }}">down</a>)
 {% endmacro %}
 
+
+
 {% block body %}
+    <div id="login_register">
+        <a href="{{ path('fos_user_security_login') }}">Login</a> | <a href="{{ path('fos_user_registration_register') }}">Register</a>
+    </div>
     <div id="latest_recipes">
         <h2>Latest public recipes</h2>
         {% for recipe in latest_recipes %}

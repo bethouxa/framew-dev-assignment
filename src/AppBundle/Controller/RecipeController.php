@@ -72,18 +72,19 @@ class RecipeController extends Controller
      */
     public function showAction(Recipe $recipe)
     {
-        $deleteForm = $this->createDeleteForm($recipe);
         $steps_ordered = $recipe->getSteps()->toArray();
-         usort($steps_ordered, function($a,$b){return ($a->getStepNum() - $b->getStepNum());}); // FIXME
+        usort($steps_ordered, function($a,$b){return ($a->getStepNum() - $b->getStepNum());}); // FIXME
 
-        return $this->render('recipe/show.html.twig', array(
-            'recipe' => $recipe,
-            'steps' =>$steps_ordered,
-            'delete_form' => $deleteForm->createView(),
+        if($recipe->getAuthor() == $this->getUser())
+        {
+            $deleteForm = $this->createDeleteForm($recipe);
+            return $this->render('recipe/show.html.twig', ['recipe' => $recipe, 'delete_form' => $deleteForm->createView()]);
+        }
+        else
+        {
+            return $this->render('recipe/show_readonly.html.twig', ['recipe' => $recipe]);
+        }
 
-
-        ));
-        //return new Response(\Doctrine\Common\Util\Debug::dump($recipe->getSteps()));
 
     }
 

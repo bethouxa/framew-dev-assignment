@@ -15,12 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DevController extends Controller
 {
-    public function checkDevEnv()
-    {
-        if($this->container->getParameter('kernel.environment'))
-            return $this->createNotFoundException();
-    }
-
     /**
      * @Route("/works")
      */
@@ -34,8 +28,6 @@ class DevController extends Controller
      */
     public function resetTagsAction()
     {
-        $this->checkDevEnv();
-
         $em = $this->getDoctrine()->getManager();
         $tagRepo = $em->getRepository('AppBundle:Tag');
         $ptagRepo = $em->getRepository('AppBundle:PendingTag');
@@ -92,5 +84,16 @@ class DevController extends Controller
         $this->getDoctrine()->getManager()->flush();
 
         return $this->render("empty.html.twig");
+    }
+
+    /**
+     * @Route("/test")
+     */
+    public function miscTestAction()
+    {
+        $recipe = $this->getDoctrine()->getManager()->getRepository('AppBundle:Recipe')->find(1);
+        foreach ($recipe->getTags() as $tag)
+            dump($tag);
+        return $this->render('empty.html.twig');
     }
 }

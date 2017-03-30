@@ -66,7 +66,6 @@ class IngredientsUsed
     public function setRecipe(\AppBundle\Entity\Recipe $recipe)
     {
         $this->recipe = $recipe;
-
         return $this;
     }
 
@@ -102,5 +101,13 @@ class IngredientsUsed
     public function getIngredient()
     {
         return $this->ingredient;
+    }
+
+    /**
+     * @return string
+     */
+    public function toString()
+    {
+        return $this->getQuantity().' '.$this->getIngredient()->getName();
     }
 }

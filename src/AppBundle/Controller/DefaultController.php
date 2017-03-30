@@ -79,21 +79,4 @@ class DefaultController extends Controller
         $em->flush();
         return new Response('',201);
     }
-
-    /**
-     * @Route("/test")
-     */
-    public function getLatestPublicRecipes() {
-        $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
-
-        $q = $qb->select('r')
-            ->from('AppBundle:Recipe','r')
-            ->where('r.public = true')
-            ->orderby('r.creationDate','DESC')
-            ->setMaxResults(5)
-            ->getQuery();
-
-        return new Response(\Doctrine\Common\Util\Debug::dump($q->getResult()));
-    }
 }
