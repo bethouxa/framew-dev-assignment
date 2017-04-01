@@ -6,7 +6,6 @@ use AppBundle\Entity\Recipe;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Recipe controller.
@@ -59,7 +58,7 @@ class RecipeController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($recipe);
-            $em->flush($recipe);
+            $em->flush();
 
             return $this->redirectToRoute('recipe_show', array('id' => $recipe->getId()));
         }
@@ -154,6 +153,6 @@ class RecipeController extends Controller
             ->setMaxResults($amt)
             ->getQuery();
 
-        return $q->getArrayResult();
+        return $q->getResult();
     }
 }

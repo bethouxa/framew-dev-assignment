@@ -39,11 +39,17 @@ class DevController extends Controller
             $em->remove($ptag);
         $em->flush();
 
-        $tags = array(new Tag("Easy"), new Tag("Hard"), new Tag("Tasty"), new Tag("Traditional"));
-        $ptags = array(new PendingTag("Italian"), new PendingTag("Diet"));
+        $tags = [
+            new Tag(new PendingTag("Easy")),
+            new Tag(new PendingTag("Hard")),
+            new Tag(new PendingTag("Tasty")),
+            new Tag(new PendingTag("Traditional"))
+        ];
 
-        dump($tags);
-        dump($ptags);
+        $ptags = [
+            new PendingTag("Italian"),
+            new PendingTag("Diet")
+        ];
 
         foreach ($tags as $tag)
             $em->persist($tag);

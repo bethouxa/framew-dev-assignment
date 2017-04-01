@@ -23,31 +23,19 @@ class CollectionController extends Controller
      * @Route("/", name="collection_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $collections = $em->getRepository('AppBundle:Collection')->findAll();
+        $incl_private = $request->get("incl_private", false);
 
-        return $this->render('collection/index.html.twig', array(
-            'collections' => $collections,
-        ));
-    }
-
-    /**
-     *
-     *
-     */
-    public function indexOwnedAction()
-    {
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            throw $this->createAccessDeniedException();
+        if ($incl_private)
+        {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN',null, "Forbidden: only admins can list non-shared collections.");
+            $collections = $em->getRepository('AppBundle:Collection')->findAll();
         }
-
-        $em = $this->getDoctrine()->getManager();
-
-        //fixme: check if works
-        $collections = $em->getRepository('AppBundle:Collection')->findBy(Criteria::create()->where('owner = '.$this->getUser()));
+        else
+            $collections = $em->getRepository('AppBundle:Collection')->findBy('shared = true');
 
         return $this->render('collection/index.html.twig', array(
             'collections' => $collections,
@@ -70,7 +58,7 @@ class CollectionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($collection);
-            $em->flush($collection);
+            $em->flush();
 
             return $this->redirectToRoute('collection_show', array('id' => $collection->getId()));
         }

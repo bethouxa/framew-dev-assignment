@@ -47,7 +47,7 @@ abstract class BaseTag {
      *
      * @param string $name
      *
-     * @return Tag
+     * @return BaseTag
      */
     public function setName($name)
     {
@@ -71,7 +71,7 @@ abstract class BaseTag {
      *
      * @param \AppBundle\Entity\Recipe $recipe
      *
-     * @return Tag
+     * @return BaseTag
      */
     public function addRecipe(\AppBundle\Entity\Recipe $recipe)
     {

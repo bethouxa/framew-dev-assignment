@@ -56,7 +56,9 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->tagsVoted = new ArrayCollection();
+        $this->tagsUpvoted = new ArrayCollection();
+        $this->tagsDownvoted = new ArrayCollection();
+
     }
 
     /**
