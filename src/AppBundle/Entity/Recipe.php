@@ -40,7 +40,7 @@ class Recipe
      */
     protected $public;
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="recipes")
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
     protected $author;

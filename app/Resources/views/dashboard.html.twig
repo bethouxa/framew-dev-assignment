@@ -1,14 +1,9 @@
 {% extends 'base.html.twig' %}
-{% import _self as macros %}
-{% import ':collection:show_summary.html.twig' as coll %}
+{% import _self as self %}
+{% import ':recipe:show_summary.html.twig' as r %}
+{% import ':collection:show_summary.html.twig' as c %}
 
 {% block title %}Recipe manager{% endblock %}
-
-{% macro recipe_summary(recipe) %}
-    <h3><a href="{{ path('recipe_show', {'id': recipe.id}) }}">{{ recipe.getTitle() }}</a></h3> <!-- TODO: link to detail view -->
-<p>{{ recipe.getSummary() }}</p>
-<p>by {{ recipe.getAuthor().getName() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }} {% if recipe.public %}(public){% endif %}</p>
-{% endmacro %}
 
 {% macro tag_score_vote(tag) %}
     {{ tag.getName() }} ({{ tag.getScore() }} - <a href="{{ path('vote_tag', {'action':'up', 'id':tag.getId()}) }}">up</a>/<a href="{{ path('vote_tag', {'action':'down', 'id':tag.getId()}) }}">down</a>)
@@ -17,26 +12,48 @@
 
 
 {% block body %}
-    <div id="login_register">
-        <a href="{{ path('fos_user_security_login') }}">Login</a> | <a href="{{ path('fos_user_registration_register') }}">Register</a>
+<!-- ##### USER LOGIN/LOGOUT/REGISTER AND PANEL ##### -->
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <div id="user_logged">
+        <p>Logged in as {{ app.user.username }} | <a href="{{ path('fos_user_security_logout') }}">Log out</a> </p>
     </div>
 
+    <div id="user_panel">
+        <a href="{{ path('user_panel') }}">My stuff</a>
+    </div>
+{% else %}
+    <div id="user_anon">
+        <a href="{{ path('fos_user_security_login') }}">Login</a> | <a href="{{ path('fos_user_registration_register') }}">Register</a>
+    </div>
+{% endif %}
+
+<!-- ##### RECIPES ##### -->
     <div id="latest_recipes">
         <h2>Latest public recipes</h2>
         {% for recipe in latest_recipes %}
-            <div>{{ macros.recipe_summary(recipe) }}</div>
+            <div>{{ r.recipe_summary(recipe) }}</div>
         {% endfor %}
     </div>
 
-{% if is_granted(expression('"IS_AUTHENTICATED_REMEMBERED" in roles ')) %}
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <a href="{{ path('recipe_index', {'public_only':true}) }}">Browse all public recipes</a>
+{% endif %}
+
+
+<!-- ##### COLLECTIONS ##### -->
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <hr/>
     <div id="collections">
+        <h2>Latest collections</h2>
         {% for collection in collections %}
-        {{ coll.coll_summ(collection) }}
+        {{ c.coll_summ(collection) }}
         {% endfor %}
     </div>
 {% endif %}
 
+<!-- ##### TAGS ##### -->
     <div id="tags">
+        <hr/>
         <h2>Tags</h2>
         <h3>Current tags</h3>
         <ul>
@@ -49,7 +66,7 @@
         <h2>Tags waiting for approval</h2>
         {% for tag in tags_pending %}
             <li>
-                {{ macros.tag_score_vote(tag) }}
+                {{ self.tag_score_vote(tag) }}
             </li>
         {% endfor %}
 

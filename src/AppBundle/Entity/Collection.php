@@ -26,7 +26,7 @@ class Collection
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="collections")
      * @ORM\JoinColumn(name="owner", referencedColumnName="id")
      */
     protected $owner;

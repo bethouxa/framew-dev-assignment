@@ -21,11 +21,21 @@ class RecipeController extends Controller
      * @Route("/", name="recipe_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $recipes = $em->getRepository('AppBundle:Recipe')->findAll();
+        $incl_private = $request->query->get('incl_private', false);
+
+        if ($incl_private)
+        {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN',null, "Forbidden: Only admins can list non public recipes.");
+            $recipes = $em->getRepository('AppBundle:Recipe')->findAll();
+        }
+        else
+        {
+            $recipes = $em->getRepository('AppBundle:Recipe')->findBy(['public'=>true]);
+        }
 
         return $this->render('recipe/index.html.twig', array(
             'recipes' => $recipes,
