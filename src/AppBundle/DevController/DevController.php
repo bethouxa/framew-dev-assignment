@@ -20,7 +20,7 @@ class DevController extends Controller
      */
     public function testDevControllerAction()
     {
-        return $this->render('empty.html.twig');
+        return new Response(null,204);
     }
 
     /**

@@ -56,6 +56,8 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
+        $this->recipes = new ArrayCollection();
+        $this->collections = new ArrayCollection();
         $this->tagsUpvoted = new ArrayCollection();
         $this->tagsDownvoted = new ArrayCollection();
 

@@ -3,11 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Form\SimpleSearchType;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -21,7 +24,7 @@ class CollectionController extends Controller
      * Lists all collection entities.
      *
      * @Route("/", name="collection_index")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
     public function indexAction(Request $request)
     {
@@ -29,16 +32,36 @@ class CollectionController extends Controller
 
         $incl_private = $request->get("incl_private", false);
 
+	    //FIXME
+	    $searchString = new SimpleSearchType();
+	    $searchForm = $this->createFormBuilder($searchString)
+		    ->add("searchTerms", TextType::class, ['required'=>true])
+		    ->add("Search", SubmitType::class)
+		    ->getForm();
+	    $searchForm->handleRequest($request);
+
+	    $qb = $em->createQueryBuilder();
+	    $q = $qb
+		    ->select('c')
+		    ->from('AppBundle:Collection', 'c');
+
+	    if ($searchForm->isSubmitted() && $searchForm->isValid())
+	    {
+		    $q->andwhere($qb->expr()->like('c.name','?1'));
+		    $q->setParameter(1, $searchString->getSearchTerms());
+	    }
+
         if ($incl_private)
         {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN',null, "Forbidden: only admins can list non-shared collections.");
-            $collections = $em->getRepository('AppBundle:Collection')->findAll();
+            $this->denyAccessUnlessGranted('ROLE_ADMIN',null, "Forbidden: only admins can list non-shared collections.");;
         }
         else
-            $collections = $em->getRepository('AppBundle:Collection')->findBy('shared = true');
+        {
+	        $q->andwhere($qb->expr()->eq('c.shared', true));
+        }
 
         return $this->render('collection/index.html.twig', array(
-            'collections' => $collections,
+            'collections' => $q->getQuery()->getResult(),
         ));
     }
 

@@ -3,9 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Recipe;
+use AppBundle\Form\SimpleSearchType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Recipe controller.
@@ -18,27 +23,45 @@ class RecipeController extends Controller
      * Lists all recipe entities.
      *
      * @Route("/", name="recipe_index")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
     public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
 
+        $em = $this->getDoctrine()->getManager();
         $incl_private = $request->query->get('incl_private', false);
 
+        //FIXME
+        $searchString = new SimpleSearchType();
+	    $searchForm = $this->createFormBuilder($searchString)
+        ->add("searchTerms", TextType::class, ['required'=>true])
+        ->getForm();
+        $searchForm->handleRequest($request);
+
+	    $qb = $em->createQueryBuilder();
+	    $q = $qb
+		    ->select('r')
+		    ->from('AppBundle:Recipe', 'r');
+
+        if ($searchForm->isSubmitted() && $searchForm->isValid())
+        {
+	        $q->andwhere($qb->expr()->orX(
+	            $qb->expr()->like('r.title','?1'),
+		        $qb->expr()->like('r.summary', '?1')
+	        ))
+	        ->setParameter(1, $searchString->getSearchTerms());
+        }
         if ($incl_private)
         {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN',null, "Forbidden: Only admins can list non public recipes.");
-            $recipes = $em->getRepository('AppBundle:Recipe')->findAll();
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, "Forbidden: Only admins can list non public recipes.");
         }
         else
         {
-            $recipes = $em->getRepository('AppBundle:Recipe')->findBy(['public'=>true]);
+        	$q->andwhere($qb->expr()->eq('r.public', true));
         }
 
-        return $this->render('recipe/index.html.twig', array(
-            'recipes' => $recipes,
-        ));
+        $recipes = $q->getQuery()->getResult();
+        return $this->render('recipe/index.html.twig', ['recipes' => $recipes, 'search_form' => $searchForm->createView()]);
     }
 
     /**
@@ -154,5 +177,18 @@ class RecipeController extends Controller
             ->getQuery();
 
         return $q->getResult();
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getSearchForm()
+    {
+        $form = $this->createFormBuilder()
+            ->add('Name', TextType::class)
+            ->add('search', SubmitType::class, ['label'=>"Search"])
+            ->getForm();
+
+        return $form;
     }
 }
