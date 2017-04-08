@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+{% import ':recipe:show_summary.html.twig' as r %}
+{% import ':collection:show_summary.html.twig' as c %}
+
+{% block title %}User Panel{% endblock %}
+
+{% block body %}
+
+<h1>User panel for {{ user.username }}</h1>
+<hr/>
+    <div id="action_bar">
+        <a href="{{ path('recipe_new') }}">Create new recipe</a> |
+        <a href="{{ path('collection_new') }}">Create new collection</a>
+    </div>
+    <div id="recipes">
+        {% if user.recipes is empty %}
+            <p>You haven't created any recipes yet. Get to work !</p>
+        {% else %}
+            <ul>
+            {% for recipe in user.recipes %}
+                <li>{{ r.recipe_summary(recipe) }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div id="collections">
+        {% if user.collections is empty %}
+            <p>You haven't created any collections yet. Get to work !</p>
+        {% else %}
+            <ul>
+                {% for recipe in user.collections %}
+                    <li>{{ c.coll_summ(recipe) }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+{% endblock %}

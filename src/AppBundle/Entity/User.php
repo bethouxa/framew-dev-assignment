@@ -21,6 +21,16 @@ class User extends BaseUser
     protected $id;
 
     /**
+     * @ORM\OneToMany(targetEntity="Recipe", mappedBy="author")
+     */
+    protected $recipes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Collection", mappedBy="owner")
+     */
+    protected $collections;
+
+    /**
      * OneToMany
      * @ORM\ManyToMany(targetEntity="PendingTag")
      * @ORM\JoinTable(name="users_tagsUp",
@@ -46,7 +56,11 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->tagsVoted = new ArrayCollection();
+        $this->recipes = new ArrayCollection();
+        $this->collections = new ArrayCollection();
+        $this->tagsUpvoted = new ArrayCollection();
+        $this->tagsDownvoted = new ArrayCollection();
+
     }
 
     /**
@@ -125,5 +139,72 @@ class User extends BaseUser
     public function getTagsDownvoted()
     {
         return $this->tagsDownvoted;
+    }
+
+    /**
+     * Add recipe
+     *
+     * @param \AppBundle\Entity\Recipe $recipe
+     *
+     * @return User
+     */
+    public function addRecipe(\AppBundle\Entity\Recipe $recipe)
+    {
+        $this->recipes[] = $recipe;
+        return $this;
+    }
+
+    /**
+     * Remove recipe
+     *
+     * @param \AppBundle\Entity\Recipe $recipe
+     */
+    public function removeRecipe(\AppBundle\Entity\Recipe $recipe)
+    {
+        $this->recipes->removeElement($recipe);
+    }
+
+    /**
+     * Get recipes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRecipes()
+    {
+        return $this->recipes;
+    }
+
+    /**
+     * Add collection
+     *
+     * @param \AppBundle\Entity\Collection $collection
+     *
+     * @return User
+     */
+    public function addCollection(\AppBundle\Entity\Collection $collection)
+    {
+        $this->collections[] = $collection;
+
+        return $this;
+    }
+
+    /**
+     * Remove collection
+     *
+     * @param \AppBundle\Entity\Collection $collection
+     */
+    public function removeCollection(\AppBundle\Entity\Collection $collection)
+    {
+        $this->collections->removeElement($collection);
+    }
+
+    /**
+     * Get collections
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCollections()
+    {
+        return $this->collections;
     }
 }

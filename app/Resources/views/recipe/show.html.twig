@@ -30,34 +30,47 @@
                 <td>{{ recipe.photo }}</td>
             </tr>
             <tr>
-                <th>Steps</th>
+                <th>Ingredients</th>
                 <td>
-                    <ol>
-                        {% for step in recipe.steps %}
-                        <li>{{ step.content }}</li>
+                    <ul>
+                        {% for ingredient in recipe.ingredients %}
+                        <li>{{ ingredient.toString }}</li>
                         {% endfor %}
-                    </ol>
+                    </ul>
                 </td>
             </tr>
             <tr>
-                <th>Creationdate</th>
+                <th>Steps</th>
+                <td>
+                    {{ recipe.steps }}
+                </td>
+            </tr>
+            <tr>
+                <th>Tags</th>
+                <td>
+                    <ul>
+                        {% for tag in recipe.tags %}
+                        <li>{{ tag.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th>Creation date</th>
                 <td>{{ recipe.creationDate|date('Y-m-d H:i:s') }}</td>
             </tr>
             <tr>
-                <th>Lasteditdate</th>
+                <th>Last edit date</th>
                 <td>{{ recipe.lastEditDate|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Rating</th>
-                <td>{{ recipe.rating }}</td>
             </tr>
         </tbody>
     </table>
 
     <ul>
         <li>
-            <a href="{{ path('recipe_index') }}">Back to the list</a>
+            <a href="{{ path('homepage') }}">Back to your dashboard</a>
         </li>
+        {% if app.user.username == recipe.author %}
         <li>
             <a href="{{ path('recipe_edit', { 'id': recipe.id }) }}">Edit</a>
         </li>
@@ -66,5 +79,6 @@
                 <input type="submit" value="Delete">
             {{ form_end(delete_form) }}
         </li>
+        {% endif %}
     </ul>
 {% endblock %}

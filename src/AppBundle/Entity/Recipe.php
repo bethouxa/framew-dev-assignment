@@ -40,7 +40,7 @@ class Recipe
      */
     protected $public;
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="recipes")
      * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
     protected $author;
@@ -58,20 +58,7 @@ class Recipe
     protected $lastEditDate;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    protected $rating;
-
-
-    /**
-     * One Recipe has many Steps.
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Step")
-     * @ORM\JoinTable(
-     *     name="recipe_steps",
-     *     joinColumns={@ORM\JoinColumn(name="recipe_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="step_id", referencedColumnName="id", unique=true)}
-     * )
-     * @ORM\OrderBy({"step_num" = "ASC"})
+     * @ORM\Column(name="content", type="text")
      */
     protected $steps;
 
@@ -92,19 +79,28 @@ class Recipe
      */
     protected $tags;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Collection", inversedBy="recipes")
+     * @ORM\JoinTable(name="recipes_collections")
+     */
+    protected $collections;
+
 
     public function __construct()
     {
-        $this->steps = new ArrayCollection();
         $this->ingredients = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->collections = new ArrayCollection();
 
         $this->setCreationDate(new \DateTime());
         $this->setLastEditDate(new \DateTime());
         $this->setPublic(false);
-        $this->setRating(0);
     }
 
+    public function __toString()
+    {
+        return $this->title;
+    }
 
 
     /**
@@ -261,63 +257,6 @@ class Recipe
         return $this->lastEditDate;
     }
 
-    /**
-     * Set rating
-     *
-     * @param integer $rating
-     *
-     * @return Recipe
-     */
-    public function setRating($rating)
-    {
-        $this->rating = $rating;
-
-        return $this;
-    }
-
-    /**
-     * Get rating
-     *
-     * @return integer
-     */
-    public function getRating()
-    {
-        return $this->rating;
-    }
-
-    /**
-     * Add step
-     *
-     * @param \AppBundle\Entity\Step $step
-     *
-     * @return Recipe
-     */
-    public function addStep(\AppBundle\Entity\Step $step)
-    {
-        $this->steps[] = $step;
-
-        return $this;
-    }
-
-    /**
-     * Remove step
-     *
-     * @param \AppBundle\Entity\Step $step
-     */
-    public function removeStep(\AppBundle\Entity\Step $step)
-    {
-        $this->steps->removeElement($step);
-    }
-
-    /**
-     * Get steps
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getSteps()
-    {
-        return $this->steps;
-    }
 
     /**
      * Add ingredient
@@ -409,5 +348,64 @@ class Recipe
     public function getAuthor()
     {
         return $this->author;
+    }
+
+
+    /**
+     * Add collection
+     *
+     * @param \AppBundle\Entity\Collection $collection
+     *
+     * @return Recipe
+     */
+    public function addCollection(\AppBundle\Entity\Collection $collection)
+    {
+        $this->collections[] = $collection;
+
+        return $this;
+    }
+
+    /**
+     * Remove collection
+     *
+     * @param \AppBundle\Entity\Collection $collection
+     */
+    public function removeCollection(\AppBundle\Entity\Collection $collection)
+    {
+        $this->collections->removeElement($collection);
+    }
+
+    /**
+     * Get collections
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCollections()
+    {
+        return $this->collections;
+    }
+
+    /**
+     * Set steps
+     *
+     * @param string $steps
+     *
+     * @return Recipe
+     */
+    public function setSteps($steps)
+    {
+        $this->steps = $steps;
+
+        return $this;
+    }
+
+    /**
+     * Get steps
+     *
+     * @return string
+     */
+    public function getSteps()
+    {
+        return $this->steps;
     }
 }

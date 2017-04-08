@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RecipeType extends AbstractType
+class CollectionType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -14,12 +14,9 @@ class RecipeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
-            ->add('summary')
-            ->add('public')
-            ->add('photo')
-            ->add('steps')
-            ->add('tags')
+            ->add('name')
+            ->add('shared')
+            ->add('recipes')
         ;
     }
     
@@ -29,7 +26,7 @@ class RecipeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Recipe'
+            'data_class' => 'AppBundle\Entity\Collection'
         ));
     }
 
@@ -38,7 +35,7 @@ class RecipeType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_recipe';
+        return 'appbundle_collection';
     }
 
 

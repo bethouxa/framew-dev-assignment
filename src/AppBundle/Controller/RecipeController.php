@@ -3,11 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Recipe;
-use AppBundle\Entity\Step;
+use AppBundle\Form\SimpleSearchType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Recipe controller.
@@ -20,17 +23,45 @@ class RecipeController extends Controller
      * Lists all recipe entities.
      *
      * @Route("/", name="recipe_index")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+
         $em = $this->getDoctrine()->getManager();
+        $incl_private = $request->query->get('incl_private', false);
 
-        $recipes = $em->getRepository('AppBundle:Recipe')->findAll();
+        //FIXME
+        $searchString = new SimpleSearchType();
+	    $searchForm = $this->createFormBuilder($searchString)
+        ->add("searchTerms", TextType::class, ['required'=>true])
+        ->getForm();
+        $searchForm->handleRequest($request);
 
-        return $this->render('recipe/index.html.twig', array(
-            'recipes' => $recipes,
-        ));
+	    $qb = $em->createQueryBuilder();
+	    $q = $qb
+		    ->select('r')
+		    ->from('AppBundle:Recipe', 'r');
+
+        if ($searchForm->isSubmitted() && $searchForm->isValid())
+        {
+	        $q->andwhere($qb->expr()->orX(
+	            $qb->expr()->like('r.title','?1'),
+		        $qb->expr()->like('r.summary', '?1')
+	        ))
+	        ->setParameter(1, $searchString->getSearchTerms());
+        }
+        if ($incl_private)
+        {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, "Forbidden: Only admins can list non public recipes.");
+        }
+        else
+        {
+        	$q->andwhere($qb->expr()->eq('r.public', true));
+        }
+
+        $recipes = $q->getQuery()->getResult();
+        return $this->render('recipe/index.html.twig', ['recipes' => $recipes, 'search_form' => $searchForm->createView()]);
     }
 
     /**
@@ -38,17 +69,19 @@ class RecipeController extends Controller
      *
      * @Route("/new", name="recipe_new")
      * @Method({"GET", "POST"})
+     * TODO: logged in users only
      */
     public function newAction(Request $request)
     {
         $recipe = new Recipe();
+        $recipe->setAuthor($this->getUser());
         $form = $this->createForm('AppBundle\Form\RecipeType', $recipe);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($recipe);
-            $em->flush($recipe);
+            $em->flush();
 
             return $this->redirectToRoute('recipe_show', array('id' => $recipe->getId()));
         }
@@ -59,11 +92,6 @@ class RecipeController extends Controller
         ));
     }
 
-    function sortSteps($a,$b)
-    {
-        return ($a->getStepNum() - $b->getStepNum());
-    }
-
     /**
      * Finds and displays a recipe entity.
      *
@@ -72,20 +100,8 @@ class RecipeController extends Controller
      */
     public function showAction(Recipe $recipe)
     {
-        $steps_ordered = $recipe->getSteps()->toArray();
-        usort($steps_ordered, function($a,$b){return ($a->getStepNum() - $b->getStepNum());}); // FIXME
-
-        if($recipe->getAuthor() == $this->getUser())
-        {
-            $deleteForm = $this->createDeleteForm($recipe);
-            return $this->render('recipe/show.html.twig', ['recipe' => $recipe, 'delete_form' => $deleteForm->createView()]);
-        }
-        else
-        {
-            return $this->render('recipe/show_readonly.html.twig', ['recipe' => $recipe]);
-        }
-
-
+        $deleteForm = $this->createDeleteForm($recipe);
+        return $this->render('recipe/show.html.twig', ['recipe' => $recipe, 'delete_form' => $deleteForm->createView()]);
     }
 
     /**
@@ -160,6 +176,19 @@ class RecipeController extends Controller
             ->setMaxResults($amt)
             ->getQuery();
 
-        return $q->getArrayResult();
+        return $q->getResult();
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getSearchForm()
+    {
+        $form = $this->createFormBuilder()
+            ->add('Name', TextType::class)
+            ->add('search', SubmitType::class, ['label'=>"Search"])
+            ->getForm();
+
+        return $form;
     }
 }

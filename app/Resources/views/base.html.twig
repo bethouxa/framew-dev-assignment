@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>{% block title %}Recipe manager{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     {% block stylesheets %}{% endblock %}
     {% block jshead %}{% endblock %}
     <meta charset="utf-8">
 </head>
 <body>
-{% block header %}<hr/>{% endblock %}
+{% block header %}<a href={{ path('homepage') }}> << Home</a><hr/>{% endblock %}
 {% block body %}{% endblock %}
 {% block footer %}
     <hr/>

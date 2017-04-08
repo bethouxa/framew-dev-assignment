@@ -2,12 +2,9 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Recipe;
-use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 
 class DefaultController extends Controller
@@ -16,7 +13,7 @@ class DefaultController extends Controller
      * @Route("/", name="homepage")
      * @var request
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         return $this->redirect('/home');
     }
@@ -24,21 +21,21 @@ class DefaultController extends Controller
     /**
      * @Route("/home", name="dashboard")
      */
-    public function showDashboard()
+    public function showDashboardAction()
     {
         dump($this->getUser());
         $em = $this->getDoctrine()->getManager();
 
 
         // 5 most recent recipes (order by creation date, 5 max)
-        $q = $em->createQueryBuilder()
-        ->select('r')
-        ->from('AppBundle:Recipe','r')
-        ->orderby('r.creationDate','DESC')
-        ->orWhere('r.public = true')
-        ->setMaxResults(5);
-
-        $recipes = $q->getQuery()->getResult();
+        $pub_recipes = $em->createQueryBuilder()
+            ->select('r')
+            ->from('AppBundle:Recipe','r')
+            ->orderby('r.creationDate','DESC')
+            ->orWhere('r.public = true')
+            ->setMaxResults(5)
+            ->getQuery()->getResult()
+        ;
 
         $tags = $em->createQueryBuilder()
             ->select('t')
@@ -52,31 +49,30 @@ class DefaultController extends Controller
             ->getQuery()->getResult()
         ;
 
-        return $this->render('dashboard.html.twig', ["latest_recipes"=>$recipes, "tags"=>$tags, "tags_pending"=>$pendingTags]);
+        $pub_collections = $em->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Collection', 'c')
+            ->where('c.shared = true')
+            ->setmaxResults(3)
+            ->getQuery()->getResult()
+        ;
+
+        return $this->render('dashboard.html.twig',
+            [
+                "latest_recipes"=>$pub_recipes,
+                "tags"=>$tags,
+                "tags_pending"=>$pendingTags,
+                "collections"=>$pub_collections,
+            ]
+        );
     }
 
     /**
-     * @Route("/show/{id}", name="Recipe")
+     * @Route("/userpanel", name="user_panel")
      */
-    public function showRecipe($id)
+    public function showUserPanelAction()
     {
-        $recipe = $this->getDoctrine()->getRepository('AppBundle:Recipe')->find($id);
-        if (!$recipe)
-            throw $this->createNotFoundException('This recipe does not exist.');
-        return $this->render(':recipe:show.html.twig',['recipe'=>$recipe]);
+        return $this->render('::user_panel.html.twig', ['user'=>$this->getUser()]);
     }
 
-    /**
-     * @Route("/create", name="Recipe creation")
-     */
-    public function createDummyRecipe()
-    {
-        $em = $this->getDoctrine()->getManager();
-        $recipe = new Recipe();
-        $recipe->setAuthor("Test author");
-        $recipe->setTitle("Test recipe");
-        $em->persist($recipe);
-        $em->flush();
-        return new Response('',201);
-    }
 }

@@ -2,6 +2,7 @@
 
 {% block body %}
     <h1>Recipes list</h1>
+    {{ form(search_form) }}
 
     <table>
         <thead>
@@ -14,7 +15,6 @@
                 <th>Photo</th>
                 <th>Creationdate</th>
                 <th>Lasteditdate</th>
-                <th>Rating</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -29,7 +29,6 @@
                 <td>{{ recipe.photo }}</td>
                 <td>{% if recipe.creationDate %}{{ recipe.creationDate|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{% if recipe.lastEditDate %}{{ recipe.lastEditDate|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ recipe.rating }}</td>
                 <td>
                     <ul>
                         <li>
