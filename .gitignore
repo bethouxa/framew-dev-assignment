@@ -19,3 +19,4 @@
 Assignment1Symfony.skipper
 src/AppBundle/Entity/.*.php~
 /composer.lock
+/composer.phar
