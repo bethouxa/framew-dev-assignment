@@ -25,6 +25,15 @@ class DevController extends Controller
     }
 
     /**
+     * @Route("/dumpuser")
+     */
+    public function dumpUser()
+    {
+        dump($this->getUser());
+        return $this->render("::empty.html.twig");
+    }
+
+    /**
      * @Route("/resetTags")
      */
     public function resetTagsAction()
@@ -118,9 +127,11 @@ class DevController extends Controller
      */
     public function miscTestAction()
     {
-    	$tag = $this->getDoctrine()->getRepository('AppBundle:Tag')->find(48);
-        $this->getDoctrine()->getRepository('AppBundle:Recipe')->find(1)->removeTag($tag);
-    	return $this->render('::empty.html.twig');
+    	$em = $this->getDoctrine()->getManager();
+    	$t = new PersonalTag("Test perso 1", $this->getUser());
+    	$em->persist($t);
+    	$em->flush();
+    	return $this->render('short_message.html.twig', ['message'=>"done"]);
     }
 
     /**

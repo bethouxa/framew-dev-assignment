@@ -10,9 +10,11 @@
 <hr/>
     <div id="action_bar">
         <a href="{{ path('recipe_new') }}">Create new recipe</a> |
-        <a href="{{ path('collection_new') }}">Create new collection</a>
+        <a href="{{ path('collection_new') }}">Create new collection</a> |
+        <a href="{{ path('ptag_new') }}">Create new personal tag</a>
     </div>
     <div id="recipes">
+        <h3>Your recipes :</h3>
         {% if user.recipes is empty %}
             <p>You haven't created any recipes yet. Get to work !</p>
         {% else %}
@@ -25,12 +27,25 @@
     </div>
 
     <div id="collections">
+        <h3>Your collections :</h3>
         {% if user.collections is empty %}
             <p>You haven't created any collections yet. Get to work !</p>
         {% else %}
             <ul>
                 {% for recipe in user.collections %}
                     <li>{{ c.coll_summ(recipe) }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    <div id="personal_tags">
+        <h3>Your personal tags :</h3>
+        {% if user.collections is empty %}
+            <p>You haven't created any personal tag yet.</p>
+        {% else %}
+            <ul>
+                {% for tag in user.personalTags %}
+                    <li>{{ tag.name }}</li>
                 {% endfor %}
             </ul>
         {% endif %}

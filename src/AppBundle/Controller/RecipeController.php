@@ -101,7 +101,20 @@ class RecipeController extends Controller
     public function showAction(Recipe $recipe)
     {
         $deleteForm = $this->createDeleteForm($recipe);
-        return $this->render('recipe/show.html.twig', ['recipe' => $recipe, 'delete_form' => $deleteForm->createView()]);
+
+        $em = $this->getDoctrine()->getManager();
+        $ptags = $em->createQueryBuilder()
+            ->select('pt')
+            ->from('AppBundle:PersonalTag', 'pt')
+            ->where('pt.owner.id = ?1')
+            ->setparameters('1', $this->getUser()->getId())
+        ;
+
+        return $this->render('recipe/show.html.twig', [
+            'recipe' => $recipe,
+            'ptags' => $ptags,
+            'delete_form' => $deleteForm->createView()
+        ]);
     }
 
     /**

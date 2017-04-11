@@ -11,7 +11,6 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
-     * @var request
      */
     public function indexAction()
     {
@@ -23,7 +22,6 @@ class DefaultController extends Controller
      */
     public function showDashboardAction()
     {
-        dump($this->getUser());
         $em = $this->getDoctrine()->getManager();
 
 
@@ -72,6 +70,7 @@ class DefaultController extends Controller
      */
     public function showUserPanelAction()
     {
+        dump($this->getUser()->getPersonalTags());
         return $this->render('::user_panel.html.twig', ['user'=>$this->getUser()]);
     }
 

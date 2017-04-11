@@ -56,6 +56,16 @@
                 </td>
             </tr>
             <tr>
+                <th>Personal tags:</th>
+                <td>
+                    <ul>
+                        {% for tag in ptags %}
+                            <li>{{ tag.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            <tr>
                 <th>Creation date</th>
                 <td>{{ recipe.creationDate|date('Y-m-d H:i:s') }}</td>
             </tr>
@@ -70,7 +80,7 @@
         <li>
             <a href="{{ path('homepage') }}">Back to your dashboard</a>
         </li>
-        {% if app.user.username == recipe.author %}
+        {% if app.user and app.user.username == recipe.author %}
         <li>
             <a href="{{ path('recipe_edit', { 'id': recipe.id }) }}">Edit</a>
         </li>

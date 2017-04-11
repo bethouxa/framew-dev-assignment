@@ -16,8 +16,6 @@ security:
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username
-        in_memory:
-            memory: ~
 
     firewalls:
         dev:
@@ -38,4 +36,11 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+        - { path: /new, role: IS_AUTHENTICATED_REMEMBERED }
+        - { path: /delete, role: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/tag/new, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+        - { path: ^/collection, role: IS_AUTHENTICATED_REMEMBERED }
+
         - { path: ^/admin/, role: ROLE_ADMIN }

@@ -4,12 +4,12 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="pending_tags")
  */
-class PendingTag extends BaseTag {
+class PendingTag extends Tag {
 
     /**
      * @ORM\Column(type="integer", nullable=false)
@@ -20,6 +20,16 @@ class PendingTag extends BaseTag {
     {
         parent::__construct($name);
         $this->setScore(0);
+    }
+
+    public function getRecipes()
+    {
+        return null;
+    }
+
+    public function addRecipe(\AppBundle\Entity\Recipe $recipe)
+    {
+        throw new \BadMethodCallException();
     }
 
     public function upvote($amt)
@@ -39,7 +49,7 @@ class PendingTag extends BaseTag {
      *
      * @return PendingTag
      */
-    public function setScore($score)
+    private function setScore($score)
     {
         $this->score = $score;
 

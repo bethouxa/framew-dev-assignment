@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="RecipeRepository")
  * @ORM\Table(name="recipes")
  */
 class Recipe
@@ -81,9 +81,9 @@ class Recipe
 
 	/**
 	 * Many recipes have many tags.
-	 * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="recipes")
+	 * @ORM\ManyToMany(targetEntity="AppBundle\Entity\PersonalTag", inversedBy="p_recipes")
 	 * @ORM\JoinTable(
-	 *     name="recipes_tags",
+	 *     name="recipes_ptags",
 	 *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id")},
 	 *     inverseJoinColumns={@ORM\JoinColumn(name="Tag_id", referencedColumnName="id")}
 	 * )
@@ -102,10 +102,10 @@ class Recipe
         $this->ingredients = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->collections = new ArrayCollection();
-
+        $this->personalTags = new ArrayCollection();
         $this->setCreationDate(new \DateTime());
         $this->setLastEditDate(new \DateTime());
-        $this->setPublic(false);
+        $this->public = false;
     }
 
     public function __toString()
@@ -173,16 +173,13 @@ class Recipe
     }
 
     /**
-     * Set public
-     *
-     * @param boolean $public
+     * Make the recipe public. _One way move.*
      *
      * @return Recipe
      */
-    public function setPublic($public)
+    public function makePublic()
     {
-        $this->public = $public;
-
+        $this->public = true;
         return $this;
     }
 
@@ -276,7 +273,7 @@ class Recipe
      *
      * @return Recipe
      */
-    public function addIngredient(\AppBundle\Entity\IngredientsUsed $ingredient)
+    public function addIngredient(IngredientsUsed $ingredient)
     {
         $this->ingredients[] = $ingredient;
 
@@ -288,7 +285,7 @@ class Recipe
      *
      * @param \AppBundle\Entity\IngredientsUsed $ingredient
      */
-    public function removeIngredient(\AppBundle\Entity\IngredientsUsed $ingredient)
+    public function removeIngredient(IngredientsUsed $ingredient)
     {
         $this->ingredients->removeElement($ingredient);
     }
@@ -310,7 +307,7 @@ class Recipe
      *
      * @return Recipe
      */
-    public function addTag(\AppBundle\Entity\Tag $tag)
+    public function addTag(Tag $tag)
     {
         $this->tags[] = $tag;
 
@@ -322,7 +319,7 @@ class Recipe
      *
      * @param \AppBundle\Entity\Tag $tag
      */
-    public function removeTag(\AppBundle\Entity\Tag $tag)
+    public function removeTag(Tag $tag)
     {
         $this->tags->removeElement($tag);
     }
@@ -344,7 +341,7 @@ class Recipe
      *
      * @return Recipe
      */
-    public function setAuthor(\AppBundle\Entity\User $author = null)
+    public function setAuthor(User $author = null)
     {
         $this->author = $author;
 
@@ -369,7 +366,7 @@ class Recipe
      *
      * @return Recipe
      */
-    public function addCollection(\AppBundle\Entity\Collection $collection)
+    public function addCollection(Collection $collection)
     {
         $this->collections[] = $collection;
 
@@ -381,7 +378,7 @@ class Recipe
      *
      * @param \AppBundle\Entity\Collection $collection
      */
-    public function removeCollection(\AppBundle\Entity\Collection $collection)
+    public function removeCollection(Collection $collection)
     {
         $this->collections->removeElement($collection);
     }
@@ -418,5 +415,36 @@ class Recipe
     public function getSteps()
     {
         return $this->steps;
+    }
+
+    public function getPersonalTags()
+    {
+        return $this->personalTags;
+    }
+
+    public function addPersonalTag(PersonalTag $tag)
+    {
+        $this->personalTags[] = $tag;
+        return $this;
+    }
+
+    public function removePersonalTag(PersonalTag $tag)
+    {
+        $this->personalTags->removeElement($tag);
+        return $this;
+    }
+
+    /**
+     * Set public
+     *
+     * @param boolean $public
+     *
+     * @return Recipe
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+
+        return $this;
     }
 }
