@@ -30,6 +30,11 @@ class User extends BaseUser
      */
     protected $collections;
 
+	/**
+	 * @ORM\OneToMany(targetEntity="PersonalTag", mappedBy="owner")
+	 */
+    protected $personalTags;
+
     /**
      * OneToMany
      * @ORM\ManyToMany(targetEntity="PendingTag")
@@ -206,5 +211,39 @@ class User extends BaseUser
     public function getCollections()
     {
         return $this->collections;
+    }
+
+    /**
+     * Add personalTag
+     *
+     * @param \AppBundle\Entity\PersonalTag $personalTag
+     *
+     * @return User
+     */
+    public function addPersonalTag(\AppBundle\Entity\PersonalTag $personalTag)
+    {
+        $this->personalTags[] = $personalTag;
+
+        return $this;
+    }
+
+    /**
+     * Remove personalTag
+     *
+     * @param \AppBundle\Entity\PersonalTag $personalTag
+     */
+    public function removePersonalTag(\AppBundle\Entity\PersonalTag $personalTag)
+    {
+        $this->personalTags->removeElement($personalTag);
+    }
+
+    /**
+     * Get personalTags
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPersonalTags()
+    {
+        return $this->personalTags;
     }
 }

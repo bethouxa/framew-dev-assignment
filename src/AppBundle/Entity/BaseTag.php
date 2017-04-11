@@ -6,7 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\MappedSuperClass
+ * @ORM\Entity
+ * @ORM\Table(name="tags")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="tag_type", type="string")
  */
 abstract class BaseTag {
 

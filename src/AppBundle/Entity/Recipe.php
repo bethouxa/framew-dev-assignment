@@ -79,6 +79,17 @@ class Recipe
      */
     protected $tags;
 
+	/**
+	 * Many recipes have many tags.
+	 * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="recipes")
+	 * @ORM\JoinTable(
+	 *     name="recipes_tags",
+	 *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id")},
+	 *     inverseJoinColumns={@ORM\JoinColumn(name="Tag_id", referencedColumnName="id")}
+	 * )
+	 */
+	protected $personalTags;
+
     /**
      * @ORM\ManyToMany(targetEntity="Collection", inversedBy="recipes")
      * @ORM\JoinTable(name="recipes_collections")
