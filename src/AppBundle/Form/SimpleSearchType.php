@@ -28,6 +28,6 @@ class SimpleSearchType extends AbstractType
 
 	public function __toString()
 	{
-		return $this->searchTerms;
+		return (String)$this->searchTerms;
 	}
 }

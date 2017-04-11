@@ -3,6 +3,7 @@
 namespace AppBundle\DevController;
 
 use AppBundle\Entity\PendingTag;
+use AppBundle\Entity\PersonalTag;
 use AppBundle\Entity\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,7 +25,7 @@ class DevController extends Controller
     }
 
     /**
-     * @Route("/reset")
+     * @Route("/resetTags")
      */
     public function resetTagsAction()
     {
@@ -32,12 +33,19 @@ class DevController extends Controller
         $tagRepo = $em->getRepository('AppBundle:Tag');
         $ptagRepo = $em->getRepository('AppBundle:PendingTag');
 
-
         foreach($tagRepo->findAll() as $tag)
-            $em->remove($tag);
+        {
+	        $em->remove($tag);
+	        foreach ($em->getRepository('AppBundle:Recipe')->findAll() as $recipe)
+		        $recipe->removeTag($tag);
+        }
         foreach($ptagRepo->findAll() as $ptag)
-            $em->remove($ptag);
-        $em->flush();
+        {
+	        $em->remove($ptag);
+	        foreach ($em->getRepository('AppBundle:Recipe')->findAll() as $recipe)
+		        $recipe->removeTag($ptag);
+        }
+	    $em->flush();
 
         $tags = [
             new Tag(new PendingTag("Easy")),
@@ -51,15 +59,28 @@ class DevController extends Controller
             new PendingTag("Diet")
         ];
 
+	    $testUser = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(["username"=>'test']);
+
+	    $persoTags = [
+        	new PersonalTag("testPerso1", $testUser),
+        	new PersonalTag("testPerso2", $testUser),
+        ];
+
+
+
         foreach ($tags as $tag)
             $em->persist($tag);
         foreach($ptags as $ptag)
             $em->persist($ptag);
+        foreach ($persoTags as $perTag)
+        	$em->persist($perTag);
         $em->flush();
 
-        return new Response('Done',201);
+        return $this->render('::short_message.html.twig', ["message"=>"Done."]);
 
     }
+
+
 
     /**
      * @Route("/testInheritance")
@@ -97,10 +118,9 @@ class DevController extends Controller
      */
     public function miscTestAction()
     {
-        $recipe = $this->getDoctrine()->getManager()->getRepository('AppBundle:Recipe')->find(1);
-        foreach ($recipe->getTags() as $tag)
-            dump($tag);
-        return $this->render('empty.html.twig');
+    	$tag = $this->getDoctrine()->getRepository('AppBundle:Tag')->find(48);
+        $this->getDoctrine()->getRepository('AppBundle:Recipe')->find(1)->removeTag($tag);
+    	return $this->render('::empty.html.twig');
     }
 
     /**
