@@ -4,6 +4,7 @@ namespace AppBundle\DevController;
 
 use AppBundle\Entity\PendingTag;
 use AppBundle\Entity\PersonalTag;
+use AppBundle\Entity\BaseTag;
 use AppBundle\Entity\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -39,7 +40,7 @@ class DevController extends Controller
     public function resetTagsAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $tagRepo = $em->getRepository('AppBundle:Tag');
+        $tagRepo = $em->getRepository('BaseTag.php');
         $ptagRepo = $em->getRepository('AppBundle:PendingTag');
 
         foreach($tagRepo->findAll() as $tag)
@@ -96,7 +97,7 @@ class DevController extends Controller
      */
     public function testInheritanceAction()
     {
-        dump($this->getDoctrine()->getRepository('AppBundle:Tag')->findAll());
+        dump($this->getDoctrine()->getRepository('BaseTag.php')->findAll());
         return $this->render('empty.html.twig');
     }
 

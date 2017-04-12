@@ -3,9 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\PendingTag;
+use AppBundle\Entity\BaseTag;
 use AppBundle\Entity\Tag;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -23,10 +25,11 @@ class TagController extends Controller
 {
     /**
      * @Route("/vote/{action}/{id}", name="vote_tag")
-     * @param id String The id of the tag to upvote
-     * @param action String 'up' or 'down"
+     * @param $id String The id of the tag to upvote
+     * @param $action String 'up' or 'down"
+     * @return Response
      */
-    public function voteAction(Request $r, String $action, String $id)
+    public function voteAction(String $action, String $id)
     {
 
         $tag = $this->getDoctrine()->getRepository('AppBundle:PendingTag')->find((int)$id);
@@ -36,7 +39,7 @@ class TagController extends Controller
         if($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED'))
             $this->voteUser($action, $tag);
         else
-            $this->voteAnon($action, $tag, $r);
+            $this->voteAnon($action, $tag);
 
         return $this->redirect("/home");
     }
@@ -73,7 +76,7 @@ class TagController extends Controller
     }
 
     //TODO: implement cookie check
-    public function voteAnon(String $action, PendingTag $tag, Request $r)
+    public function voteAnon(String $action, PendingTag $tag)
     {
         if ($action == "up")
             $tag->upvote(1);
@@ -87,6 +90,8 @@ class TagController extends Controller
 
     /**
      * @Route("/new", name="submit_tag")
+     * @param $r Request
+     * @return Response
      */
     public function newTagAction(Request $r)
     {
@@ -109,8 +114,7 @@ class TagController extends Controller
             } catch (UniqueConstraintViolationException $pdo) {
                 return new Response('Tag already exists', 422);
             }
-            //FIXME
-            return new Response('Created',201);
+            return $this->redirectToRoute("tag_show", ['id'=>$tag->getId()]);
         }
 
         return $this->render(':tag:new.html.twig', array(
@@ -121,6 +125,7 @@ class TagController extends Controller
     /**
      * @Route("/approve/{id}")
      * @Security("has_role('ROLE_ADMIN')")
+     * @return Response
      */
     public function approveAction($id)
     {
@@ -141,4 +146,38 @@ class TagController extends Controller
         dump($tag);
         return new Response('Approved');
     }
+
+	/**
+	 * Lists all tag entities.
+	 *
+	 * @Route("/", name="tag_index")
+	 * @Method("GET")
+	 * @return Response
+	 */
+	public function indexAction()
+	{
+		$em = $this->getDoctrine()->getManager();
+
+		$tags = $em->getRepository('BaseTag.php')->findAll();
+
+		return $this->render('tag/index.html.twig', array(
+			'tags' => $tags,
+		));
+	}
+
+	/**
+	 * Finds and displays a tag entity.
+	 *
+	 * @Route("/{id}", name="tag_show")
+	 * @Method("GET")
+	 * @param $tag Tag
+	 * @return Response
+	 */
+	public function showAction(Tag $tag)
+	{
+
+		return $this->render('tag/show.html.twig', array(
+			'tag' => $tag,
+		));
+	}
 }

@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 /**
  * @ORM\Entity
  */
-class PendingTag extends Tag {
+class PendingTag extends BaseTag {
 
     /**
      * @ORM\Column(type="integer", nullable=false)

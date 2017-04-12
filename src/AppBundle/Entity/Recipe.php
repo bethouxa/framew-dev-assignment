@@ -70,7 +70,7 @@ class Recipe
 
     /**
      * Many recipes have many tags.
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="recipes")
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="recipes")
      * @ORM\JoinTable(
      *     name="recipes_tags",
      *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id")},

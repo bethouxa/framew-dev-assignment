@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Personaltags list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for personalTag in personalTags %}
+            <tr>
+                <td><a href="{{ path('personaltag_show', { 'id': personalTag.id }) }}">{{ personalTag.id }}</a></td>
+                <td>{{ personalTag.name }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('personaltag_show', { 'id': personalTag.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('personaltag_edit', { 'id': personalTag.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('personaltag_new') }}">Create a new personalTag</a>
+        </li>
+    </ul>
+{% endblock %}

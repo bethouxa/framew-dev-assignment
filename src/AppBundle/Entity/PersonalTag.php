@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  */
-class PersonalTag extends Tag
+class PersonalTag extends BaseTag
 {
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="personalTags")

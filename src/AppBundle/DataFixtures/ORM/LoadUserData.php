@@ -1,5 +1,7 @@
 <?php
 
+namespace AppBundle\DataFixtures\ORM;
+
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -21,22 +23,33 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
     {
         $userManager = $this->container->get('fos_user.user_manager');
 
-        $user = $userManager->createUser();
-        $user->setUsername('admin');
-        $user->setEmail('admin@recipe-manager.com');
-        $user->setPlainPassword('plopplop');
-        $user->setEnabled(true);
-        $user->setRoles(array('ROLE_SUPER_ADMIN'));
+        $user1 = $userManager->createUser();
+        $user1->setUsername('admin');
+        $user1->setEmail('admin@recipe-manager.com');
+        $user1->setPlainPassword('plopplop');
+        $user1->setEnabled(true);
+        $user1->setRoles(array('ROLE_SUPER_ADMIN'));
 
-        $userManager->updateUser($user); // handles persist / flush
+        $userManager->updateUser($user1); // handles persist / flush
 
-        $user = $userManager->createUser();
-        $user->setUsername('[deleted]');
-        $user->setEmail('admin@recipe-manager.com');
-        $user->setPlainPassword('plopplop');
-        $user->setEnabled(false);
+        $user2 = $userManager->createUser();
+        $user2->setUsername('[deleted]');
+        $user2->setEmail('admin@recipe-manager.com');
+        $user2->setPlainPassword('plopplop');
+        $user2->setEnabled(false);
 
-        $userManager->updateUser($user); // handles persist / flush
+        $userManager->updateUser($user2); // handles persist / flush
+
+	    $user3 = $userManager->createUser();
+	    $user3->setUsername('test');
+	    $user3->setEmail('plop@plop.fr');
+	    $user3->setPlainPassword('test');
+	    $user3->setEnabled(true);
+
+	    $userManager->updateUser($user3);
+	    $this->addReference('test-user', $user3);
+
+
 
     }
 }

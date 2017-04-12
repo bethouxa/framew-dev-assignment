@@ -19,7 +19,7 @@ class RecipeType extends AbstractType
             ->add('title')
             ->add('summary')
             ->add('public')
-            ->add('photo', FileType::class)
+            ->add('photo', FileType::class, ['required'=>false])
             ->add('steps')
             ->add('tags')
             ->add('personalTags')

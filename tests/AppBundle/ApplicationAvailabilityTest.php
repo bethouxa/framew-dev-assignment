@@ -52,8 +52,10 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
 	{
 		$client = self::createClient();
 		foreach ($this::$routes as $route)
+		{
 		$client->request('GET', $route);
-		echo($client->getResponse()->getStatusCode());
-		$this->assertTrue($client->getResponse()->isSuccessful());
+		$this->assertTrue($client->getResponse()->isSuccessful() or $client->getResponse()->isRedirection(),
+			"Status code of ".$route." is ".$client->getResponse()->getStatusCode());
+		}
 	}
 }

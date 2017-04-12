@@ -55,7 +55,7 @@ class DefaultController extends Controller
             ->getQuery()->getResult()
         ;
 
-        return $this->render('dashboard.html.twig',
+	    return $this->render('dashboard.html.twig',
             [
                 "latest_recipes"=>$pub_recipes,
                 "tags"=>$tags,
@@ -70,7 +70,6 @@ class DefaultController extends Controller
      */
     public function showUserPanelAction()
     {
-        dump($this->getUser()->getPersonalTags());
         return $this->render('::user_panel.html.twig', ['user'=>$this->getUser()]);
     }
 

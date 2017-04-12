@@ -8,7 +8,13 @@
     <meta charset="utf-8">
 </head>
 <body>
-{% block header %}<a href={{ path('homepage') }}> << Home</a><hr/>{% endblock %}
+{% block header %}
+    <a href={{ path('homepage') }}> << Home</a>
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+         | <a href="{{ path('user_panel') }}">My profile</a>
+    {% endif %}
+<hr/>
+{% endblock %}
 {% block body %}{% endblock %}
 {% block footer %}
     <hr/>

@@ -131,8 +131,8 @@ class RecipeController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('recipe_edit', array('id' => $recipe->getId()));
+			$redirTarget = $request->get("from", "recipe_index");
+            return $this->redirectToRoute($redirTarget, array('id' => $recipe->getId()));
         }
 
         return $this->render('recipe/edit.html.twig', array(
