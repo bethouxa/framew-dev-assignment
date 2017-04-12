@@ -21,7 +21,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("users")
+     * @Route("/users")
      */
     public function userManagementAction()
     {
