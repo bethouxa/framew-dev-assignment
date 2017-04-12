@@ -69,7 +69,6 @@ class RecipeController extends Controller
      *
      * @Route("/new", name="recipe_new")
      * @Method({"GET", "POST"})
-     * TODO: logged in users only
      */
     public function newAction(Request $request)
     {

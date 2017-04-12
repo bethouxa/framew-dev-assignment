@@ -71,7 +71,7 @@ abstract class BaseTag {
      *
      * @return BaseTag
      */
-    public function addRecipe(\AppBundle\Entity\Recipe $recipe)
+    public function addRecipe(Recipe $recipe)
     {
         $this->recipes[] = $recipe;
 
@@ -83,7 +83,7 @@ abstract class BaseTag {
      *
      * @param \AppBundle\Entity\Recipe $recipe
      */
-    public function removeRecipe(\AppBundle\Entity\Recipe $recipe)
+    public function removeRecipe(Recipe $recipe)
     {
         $this->recipes->removeElement($recipe);
     }
