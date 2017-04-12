@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
+{% import ':recipe:show_summary.html.twig' as r %}
 
 {% block body %}
-    <h1>Tag</h1>
+    <h1>Tag "{{ tag.name }}"</h1>
 
     <table>
         <tbody>
@@ -14,8 +15,14 @@
                 <td>{{ tag.name }}</td>
             </tr>
             <tr>
-                <th>Id</th>
-                <td>{{ tag.id }}</td>
+                <th>Recipes tagged with this</th>
+                <td>
+                    <ul>
+                    {% for recipe in tag.recipes %}
+                        <li>{{ r.recipe_link(recipe) }}</li>
+                    {% endfor %}
+                    </ul>
+                </td>
             </tr>
         </tbody>
     </table>

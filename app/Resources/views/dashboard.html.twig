@@ -55,7 +55,7 @@
         <ul>
             {% for tag in tags %}
                 <li>
-                    <a href="">{{ tag.getName() }}</a>
+                    <a href="{{ path("tag_show", {id: tag.id}) }}">{{ tag.getName() }}</a>
                 </li>
             {% endfor %}
         </ul>
