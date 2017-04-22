@@ -19,7 +19,7 @@
             </tr>
             <tr>
                 <th>Owner</th>
-                <td>{{ collection.owner.name }}</td>
+                <td>{% if collection.owner.name %}{{ collection.owner.name }}{% else %}(deleted account){% endif %}</td>
             </tr>
             <tr>
             <th>Recipes</th>

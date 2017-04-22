@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+{% import ':recipe:show_summary.html.twig' as r %}
+{% import ':collection:show_summary.html.twig' as c %}
+
+
+{% block body %}
+    <h1>User</h1>
+
+    {% if is_granted('ROLE_ADMIN') %}
+    <p style="color: orangered">/!\ Admin view, you're seeing non-public info</p>
+    {% endif %}
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user.id }}</td>
+            </tr>
+        <tr>
+            <th>Username</th>
+            <td>{{ user.name }}</td>
+        </tr>
+        <tr>
+            <th>Recipes by this user</th>
+            <td>
+                <ul>
+                    {% for recipe in user.recipes %}
+                    {% if recipe.public or is_granted('ROLE_ADMIN') %}
+                    {{ r.recipe_summary(recipe) }}
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+            <tr>
+                <th>Collections by this user</th>
+                <td>
+                    <ul>
+                        {% for collection in user.collections %}
+                            {% if collection.shared or is_granted('ROLE_ADMIN') %}
+                                {{ c.coll_summ(collection) }}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('user_index') }}">Back to the list</a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') or app.user.id == user.id %}
+        <li>
+            <a href="{{ path('user_edit', { 'id': user.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+        {% endif %}
+    </ul>
+{% endblock %}

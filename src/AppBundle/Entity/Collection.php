@@ -27,7 +27,7 @@ class Collection
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="collections")
-     * @ORM\JoinColumn(name="owner", referencedColumnName="id")
+     * @ORM\JoinColumn(name="owner", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $owner;
 

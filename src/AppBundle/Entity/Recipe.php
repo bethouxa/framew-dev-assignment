@@ -41,7 +41,7 @@ class Recipe
     protected $public;
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="recipes")
-     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $author;
     /**

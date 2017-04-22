@@ -23,7 +23,7 @@
             </tr>
             <tr>
                 <th>Author</th>
-                <td>{{ recipe.author }}</td>
+                <td>{% if recipe.author %}{{ recipe.author.name }}{% else %}(deleted account){% endif %}</td>
             </tr>
             <tr>
                 <th>Photo</th>
