@@ -2,6 +2,11 @@
 
 {% block body %}
     <h1>Recipes list</h1>
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <p style="color: orangered">/!\ Admin view, you're seeing non-public info</p>
+    {% endif %}
+
     {{ form(search_form) }}
 
     <table>
