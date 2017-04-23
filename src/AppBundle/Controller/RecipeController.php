@@ -161,6 +161,26 @@ class RecipeController extends Controller
         return $this->redirectToRoute('recipe_index');
     }
 
+	/**
+	 * @Route("/{id}/tag")
+	 * @Method({"GET", "POST"})
+	 */
+	public function tagAction(Recipe $rec, Request $req)
+	{
+		$form = $this->createForm('AppBundle\Form\RecipePersonalTagsType', $rec);
+		$form->handleRequest($req);
+
+		if ($form->isSubmitted() && $form->isValid())
+		{
+			$this->getDoctrine()->getManager()->flush();
+			return $this->redirectToRoute("recipe_show", ['id'=>$rec->getId()]);
+		}
+
+		return $this->render(':recipe:edit_ptags.html.twig',[
+			'form_edit' => $form->createView(),
+		]);
+	}
+
     /**
      * Creates a form to delete a recipe entity.
      *

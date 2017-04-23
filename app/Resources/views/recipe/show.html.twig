@@ -23,7 +23,7 @@
             </tr>
             <tr>
                 <th>Author</th>
-                <td>{% if recipe.author %}{{ recipe.author.name }}{% else %}(deleted account){% endif %}</td>
+                <td>{{ recipe.author|default("(deleted)") }}</td>
             </tr>
             <tr>
                 <th>Photo</th>
@@ -80,15 +80,18 @@
         <li>
             <a href="{{ path('homepage') }}">Back to your dashboard</a>
         </li>
-        {% if app.user and app.user.username == recipe.author %}
-        <li>
-            <a href="{{ path('recipe_edit', { 'id': recipe.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
+        {% if app.user %}
+        <li><a href="{{ path('app_recipe_tag', {id: recipe.id}) }}">Edit personal tags</a></li>
+            {% if app.user.username == recipe.author %}
+            <li>
+                <a href="{{ path('recipe_edit', { 'id': recipe.id }) }}">Edit</a>
+            </li>
+            <li>
+                {{ form_start(delete_form) }}
+                    <input type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </li>
+            {% endif %}
         {% endif %}
     </ul>
 {% endblock %}

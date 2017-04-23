@@ -1,7 +1,7 @@
 {% macro recipe_summary(recipe, from) %}
     <h3><a href="{{ path('recipe_show', {'id': recipe.id, 'from': from}) }}">{{ recipe.getTitle() }}</a></h3>
     <p>{{ recipe.getSummary() }}</p>
-    <p>by {{ recipe.getAuthor().getName() }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }} {% if recipe.public %}(public){% endif %}</p>
+    <p>by {{ recipe.getAuthor().getName()|default("(deleted)") }} on {{ recipe.getCreationDate|date('Y-m-d H:i:s') }} {% if recipe.public %}(public){% endif %}</p>
 {% endmacro %}
 
 {% macro recipe_link(recipe) %}

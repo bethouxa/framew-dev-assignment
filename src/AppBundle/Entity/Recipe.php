@@ -11,6 +11,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * @ORM\Entity(repositoryClass="RecipeRepository")
@@ -173,12 +174,14 @@ class Recipe
     }
 
     /**
-     * Make the recipe public. _One way move.*
+     * Make the recipe public. _One way move._
      *
      * @return Recipe
      */
-    public function makePublic()
+    public function setPublic(bool $public)
     {
+    	if ($this->public == true)
+    		throw new Exception("Cannot make a public recipe private."); // FIXME: handle this in form instead.
         $this->public = true;
         return $this;
     }
@@ -417,9 +420,13 @@ class Recipe
         return $this->steps;
     }
 
-    public function getPersonalTags()
+    public function getPersonalTags(User $u)
     {
-        return $this->personalTags;
+    	$retval = [];
+    	foreach ($this->personalTags as $personalTag)
+    		if($personalTag->owner == $u)
+    			$retval[] = $personalTag;
+	    return $retval;
     }
 
     public function addPersonalTag(PersonalTag $tag)
@@ -431,20 +438,6 @@ class Recipe
     public function removePersonalTag(PersonalTag $tag)
     {
         $this->personalTags->removeElement($tag);
-        return $this;
-    }
-
-    /**
-     * Set public
-     *
-     * @param boolean $public
-     *
-     * @return Recipe
-     */
-    public function setPublic($public)
-    {
-        $this->public = $public;
-
         return $this;
     }
 }
