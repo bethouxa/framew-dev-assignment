@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PersonalTag extends BaseTag
 {
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="personalTags")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="personalTags", cascade={"remove"})
      */
     protected $owner;
 

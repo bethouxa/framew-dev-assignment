@@ -74,8 +74,8 @@ class Recipe
      * @ORM\ManyToMany(targetEntity="Tag", inversedBy="recipes")
      * @ORM\JoinTable(
      *     name="recipes_tags",
-     *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="Tag_id", referencedColumnName="id")}
+     *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="Tag_id", referencedColumnName="id", onDelete="CASCADE")}
      * )
      */
     protected $tags;
@@ -85,8 +85,8 @@ class Recipe
 	 * @ORM\ManyToMany(targetEntity="AppBundle\Entity\PersonalTag", inversedBy="p_recipes")
 	 * @ORM\JoinTable(
 	 *     name="recipes_ptags",
-	 *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id")},
-	 *     inverseJoinColumns={@ORM\JoinColumn(name="Tag_id", referencedColumnName="id")}
+	 *     joinColumns={@ORM\JoinColumn(name="Recipe_id", referencedColumnName="id", onDelete="CASCADE")},
+	 *     inverseJoinColumns={@ORM\JoinColumn(name="Tag_id", referencedColumnName="id", onDelete="CASCADE")}
 	 * )
 	 */
 	protected $personalTags;
@@ -424,7 +424,7 @@ class Recipe
     {
     	$retval = [];
     	foreach ($this->personalTags as $personalTag)
-    		if($personalTag->owner == $u)
+    		if($personalTag->getOwner() == $u)
     			$retval[] = $personalTag;
 	    return $retval;
     }

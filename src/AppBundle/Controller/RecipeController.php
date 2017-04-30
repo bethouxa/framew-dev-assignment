@@ -105,13 +105,7 @@ class RecipeController extends Controller
         $ptags = null;
         if ($this->get('security.authorization_checker')->isGranted("IS_AUTHENTICATED_REMEMBERED"))
         {
-        $ptags = $em->createQueryBuilder()
-	       ->select('pt')
-	       ->from('AppBundle:PersonalTag', 'pt')
-	       ->where('pt.owner.id = ?1')
-	       ->setparameters('1', $this->getUser()->getId())
-           ->getQuery()->getResult()
-        ;
+        	$ptags = $recipe->getPersonalTags($this->getUser());
         }
         return $this->render('recipe/show.html.twig', [
             'recipe' => $recipe,

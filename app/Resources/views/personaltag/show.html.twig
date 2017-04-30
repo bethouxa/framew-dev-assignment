@@ -13,6 +13,16 @@
                 <th>Name</th>
                 <td>{{ personalTag.name }}</td>
             </tr>
+        <tr>
+            <th>Recipes tagged with this tag:</th>
+            <td>
+                <ul>
+                    {% for recipe in personalTag.recipes %}
+                    <li><a href="{{ path("recipe_show", {'id':recipe.id}) }}">{{ recipe.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
         </tbody>
     </table>
 
