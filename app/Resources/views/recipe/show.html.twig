@@ -60,7 +60,7 @@
                 <td>
                     <ul>
                         {% for tag in ptags %}
-                            <li><a href="{{ path('tag_show', {'id':tag.id}) }}">{{ tag.name }}</a></li>
+                            <li><a href="{{ path('personaltag_show', {'id':tag.id}) }}">{{ tag.name }}</a></li>
                         {% endfor %}
                     </ul>
                 </td>
